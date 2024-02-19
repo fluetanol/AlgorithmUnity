@@ -39,6 +39,11 @@ public class UIManager : MonoBehaviour
             AlgorithmManager._sortInterface = new InsertionSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
             break;
 
+            case 2:
+            ModeText.text = "Sort: Bubble";
+            AlgorithmManager._sortInterface = new BubbleSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            break;
+
             default:
             break;
         }
