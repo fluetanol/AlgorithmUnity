@@ -3,35 +3,31 @@ using UnityEngine;
 
 public class AlgorithmManager : MonoBehaviour
 {
-    public SortInterface sortInterface;
     public GameObject SortObject;
     public List<int> _sortList = new();
     public List<GameObject> _sortObject = new();
     public int Size = 50;
 
+    public static AlgorithmManager Instance;
+    public static SortInterface _sortInterface;
 
     private float _time;
-    private List<int> _saveList;
-    private List<GameObject> _saveObject;
 
+    void Awake()=> Instance = this;
 
-    private void OnEnable()
-    {
-        InitializeList(Size);
-        RandomizeObject.RandomizeList(ref _sortList, _sortList.Count);
-        InitializeInstantiateObject(_sortList, SortObject);
-        SetCameraPosition();
-        
+    private void OnEnable(){
+        InitializeSetting(Size);
+        DontDestroyOnLoad(this);
     }
+
     void Start(){ 
-        _saveList = _sortList;
-        _saveObject = _sortObject;
-        sortInterface = new SelectionSort(_sortList, _sortObject);
+        _sortInterface = new SelectionSort(_sortList, _sortObject);
     }
 
     void Update() {
-        if(sortInterface.UpdateSort()) {
-            print(_time);
+        if(_sortInterface.UpdateSort()) {
+            UIManager.Instance.SetTimeText("Time : " + _time.ToString());
+            UIManager.Instance.SetModeText("Finish!");
             gameObject.SetActive(false);
         }
         TimeCheck(ref _time);
@@ -39,12 +35,25 @@ public class AlgorithmManager : MonoBehaviour
 
     public void TimeCheck(ref float time)=>time += Time.deltaTime;
 
+    public void InitializeSetting(int size){
+        _time = 0;
+        Size = size;
+        InitializeList(size);
+        RandomizeObject.RandomizeList(ref _sortList, _sortList.Count);
+        InitializeInstantiateObject(_sortList, SortObject);
+        SetCameraPosition();
+    }
+
     private void InitializeList(int Size){
+        _sortList.Clear();
         for (int i = 0; i < Size; i++)  _sortList.Add(i);
     }
 
     private void InitializeInstantiateObject(List<int> sortList, GameObject InstanceObject)
     {
+        foreach(var i in _sortObject) Destroy(i);
+        _sortObject.Clear();
+
         for (int i = 0; i < sortList.Count; i++)
         {
             var newObject = Instantiate(InstanceObject);
