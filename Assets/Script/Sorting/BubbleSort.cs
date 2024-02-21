@@ -32,17 +32,23 @@ public class BubbleSort : SortInterface
 
     public bool UpdateSort()
     {
-        if(_checkIndex == _sortList.Count - _pivotIndex) {
-            Debug.Log(_checkIndex);
-            _sortObject[_checkIndex-1].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+        Debug.Log(_pivotIndex + " "+_index + " "+ _checkIndex);
+
+        if (_pivotIndex >= _sortList.Count - 1) {
+            AlgorithmManager.Instance.source2.pitch = 1;
+            return true;
+        }
+        if (_checkIndex >= _sortList.Count - _pivotIndex) {
+            //_sortObject[_checkIndex-1].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
             _checkIndex = 1;
             _index = 0;
             _pivotIndex += 1;
         }
 
-        if (_pivotIndex == _sortList.Count-1) return true;
-
-        if (_sortList[_index] > _sortList[_checkIndex]) ChangeElement(_index, _checkIndex);
+        if (_sortList[_index] > _sortList[_checkIndex]) {
+            ChangeElement(_index, _checkIndex);
+            //AlgorithmManager.Instance.source2.Play();
+        }
 
         _index += 1;
         _checkIndex += 1;

@@ -13,6 +13,8 @@ public class SelectionSort : SortInterface
     //현재 탐색 위치
     private int _index = 1;
 
+    public AudioSource source;
+
     public SelectionSort(List<int> sortList, List<GameObject> sortObject){
         _sortList = sortList;
         _sortObject = sortObject;
@@ -30,17 +32,20 @@ public class SelectionSort : SortInterface
         _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
         _sortObject[changeIndex].transform.localScale = pivotObjectScale;
 
-        _sortObject[_pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+        //_sortObject[_pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
     }
 
     public bool UpdateSort()
     {
         if (_pivotIndex == _sortList.Count) {
+            AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         else if (_index == _sortList.Count)
         {
             ChangeElement(_pivotIndex, _minIndex);
+            //AlgorithmManager.Instance.source2.Play();
+            //if(AlgorithmManager.Instance.source2.pitch <= 2) AlgorithmManager.Instance.source2.pitch += 0.01f;
             _pivotIndex += 1;
             _index = _pivotIndex + 1;
             _minIndex = _pivotIndex;

@@ -28,16 +28,18 @@ public class InsertionSort : SortInterface
         _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
         _sortObject[changeIndex].transform.localScale = pivotObjectScale;
 
-        _sortObject[pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+        //_sortObject[pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
     }
 
     public bool UpdateSort()
     {
         if(_checkIndex == _sortList.Count) {
+            /*
             for(int i=_sortObject.Count-1; i>=0; i--){
                 if(_sortObject[i].GetComponentInChildren<MeshRenderer>().material.color == Color.red) break;
                 _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
-            }
+            }*/
+            AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         else if(_index == -1 || _sortList[_index]< _sortList[_checkIndex]){
@@ -47,6 +49,7 @@ public class InsertionSort : SortInterface
             
         }
         else if(_sortList[_index]>=_sortList[_checkIndex]){
+            //AlgorithmManager.Instance.source2.Play();
             ChangeElement(_index, _checkIndex);
             _checkIndex -= 1;
             _index -=1;

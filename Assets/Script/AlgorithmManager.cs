@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,12 +8,14 @@ public class AlgorithmManager : MonoBehaviour
     public List<int> _sortList = new();
     public List<GameObject> _sortObject = new();
     public int Size = 50;
+    public AudioSource source;
+    public AudioSource source2;
 
     public static AlgorithmManager Instance;
     public static SortInterface _sortInterface;
 
     private float _time;
-
+    private bool _isFinish;
     void Awake()=> Instance = this;
 
     private void OnEnable(){
@@ -21,17 +24,40 @@ public class AlgorithmManager : MonoBehaviour
     }
 
     void Start(){ 
-        _sortInterface = new SelectionSort(_sortList, _sortObject);
+        //_sortInterface = new SelectionSort(_sortList, _sortObject);
+        _sortInterface = new MergeSort(_sortList, _sortObject);
     }
 
-    void Update() {
-        if(_sortInterface.UpdateSort()) {
+    void FixedUpdate() {
+        TimeCheck(ref _time);
+        if (_sortInterface.UpdateSort()) {
             UIManager.Instance.SetTimeText("Time : " + _time.ToString());
             UIManager.Instance.SetModeText("Finish!");
-            gameObject.SetActive(false);
+            //if (!_isFinish)
+            //{
+               // StartCoroutine(FinishAnimation());
+            //}
+            gameObject.SetActive(false);   
         }
-        TimeCheck(ref _time);
     }
+
+    IEnumerator FinishAnimation(){
+        int i=0;
+        _isFinish = true;
+        while (i<_sortObject.Count){
+            Color color = (Color.red/_sortObject.Count) * i;
+            _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = color;
+            source.pitch += 0.01f;
+            source.Play();
+            i+=1;
+            yield return new WaitForSeconds(0.1f);
+        }
+        source.pitch = 1;
+        if (_isFinish == true)_isFinish = false;
+        gameObject.SetActive(false);
+        yield break;
+    }
+
 
     public void TimeCheck(ref float time)=>time += Time.deltaTime;
 

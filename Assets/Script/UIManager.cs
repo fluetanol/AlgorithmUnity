@@ -44,6 +44,12 @@ public class UIManager : MonoBehaviour
             AlgorithmManager._sortInterface = new BubbleSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
             break;
 
+            case 3:
+            ModeText.text = "Sort: Merge";
+            AlgorithmManager._sortInterface = new MergeSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            break;
+
+
             default:
             break;
         }
