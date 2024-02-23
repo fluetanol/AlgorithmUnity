@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,7 +6,9 @@ public class MergeSort : SortInterface
 {
     private List<int> _sortList = new();
     private List<GameObject> _sortObject = new();
-    private List<int> _swapList = new();
+    private List<(Vector3, String)> _sortObjectScale = new();
+    private List<int> _swapList1 = new();
+    private List<int> _swapList2 = new();
 
     private int _index=0;
     private int _checkIndex = 1;
@@ -17,121 +20,94 @@ public class MergeSort : SortInterface
 
     public MergeSort(List<int> sortList, List<GameObject> sortObject){
         _sortList = sortList;
+        foreach(var i in _sortList){
+            _swapList2.Add(i);
+        }
+        foreach(var i in sortObject){
+            _sortObjectScale.Add((i.transform.localScale, i.name));
+        }
         _sortObject = sortObject;
         _listLength = _sortList.Count;
     }
 
-    private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortObject[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortObject[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex];
-
-        _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex] = pivotNum;
-
-        _sortObject[pivotIndex].name = _sortObject[changeIndex].name;
-        _sortObject[changeIndex].name = pivotObjectName;
-        _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
-        _sortObject[changeIndex].transform.localScale = pivotObjectScale;
+    private void ChangeElement(int pivotIndex, int changeIndex, List<int> tempList){
+        _sortList[pivotIndex] = tempList[changeIndex];
+        _sortObject[pivotIndex].name = _sortObjectScale[changeIndex].Item2;
+        _sortObject[pivotIndex].transform.localScale = _sortObjectScale[changeIndex].Item1;
     }
 
     public bool UpdateSort()
     {
-        if(_length == _listLength) {
-           foreach(var k in _swapList){
-                _sortList.Add(k);
-           }
-            return true;
-        }
-
-        if(!_isSwap){
-            if (_swapList.Count == _sortList.Count){
-                _length *= 2;
-                _sortList.Clear();
-                _index = 0;
-                _checkIndex = _index + _length;
-                _count = 0;
-                _checkCount = 0;
-                _isSwap = !_isSwap;
-            }
-            else if(_count == _length && _checkCount == _length){
-                Debug.Log("lvlup!");
-                _index = _index-_length;
-                _index += _length * 2;
-                _checkIndex = _index + _length;
-                _count = 0;
-                _checkCount=0;
-            }
-            else if (_count >= _length)
-            {
-                _swapList.Add(_sortList[_checkIndex]);
-                _checkIndex += 1;
-                _checkCount+=1;
-            }
-            else if (_checkCount >= _length)
-            {
-                _swapList.Add(_sortList[_index]);
-                _index += 1;
-                _count+=1;
-            }
-            else if(_sortList[_index] < _sortList[_checkIndex]){ 
-                _swapList.Add(_sortList[_index]);  
-                _index+=1;
-                _count+=1;
-           }
-           else if(_sortList[_index] >= _sortList[_checkIndex]){
-                _swapList.Add(_sortList[_checkIndex]);
-                _checkIndex+=1;
-                _checkCount+=1;
-           }
-
-        }
-        else{
-            Debug.Log(_length + " " + _index + " " + _checkIndex + " " + _count + " " + _checkCount);
-            if (_swapList.Count == _sortList.Count){
-                _length *= 2;
-                _swapList.Clear();
-                _index = 0;
-                _checkIndex = _index + _length;
-                _count = 0;
-                _checkCount = 0;
-                _isSwap = !_isSwap;
-            }
-            else if (_count == _length && _checkCount == _length)
-            {
-                _index = _index - _length;
-                _index += _length * 2;
-                _checkIndex = _index + _length;
-                _count=0;
-                _checkCount = 0;
-            }
-            else if (_count >= _length)
-            {
-                _sortList.Add(_swapList[_checkIndex]);
-                _checkIndex += 1;
-                _checkCount += 1;
-            }
-            else if (_checkCount >= _length)
-            {
-                _sortList.Add(_swapList[_index]);
-                _index += 1;
-                _count += 1;
-            }
-            else if (_swapList[_index] < _swapList[_checkIndex]) {
-                _sortList.Add(_swapList[_index]);
-                _index += 1;
-                _count += 1;
-            }
-            else if (_swapList[_index] >= _swapList[_checkIndex])
-            {
-                _sortList.Add(_swapList[_checkIndex]);
-                _checkIndex += 1;
-                _checkCount += 1;
-            }
-        }
-        
-
+        if (_length == _listLength)  return true;
+        if(!_isSwap) Merging(ref _swapList1, ref _swapList2);
+        else Merging(ref _swapList2, ref _swapList1);   
         return false;
     }
+
+    private void Merging(ref List<int> swapList1, ref List<int> swapList2){
+        Debug.Log(_index +" "+_checkIndex + " "+_length+ " "+swapList1);
+        if (swapList1.Count == swapList2.Count)       //한 주기가 끝나는 타이밍
+        {
+            swapList2.Clear();
+            _sortObjectScale.Clear();
+            _length *= 2;
+            _index = 0;
+            _count = 0;
+            _checkCount = 0;
+            _checkIndex = _index + _length;
+            _isSwap = !_isSwap;
+            foreach (var i in _sortObject) _sortObjectScale.Add((i.transform.localScale, i.name));
+        }
+
+        else if (_count == _length && _checkCount == _length)   //다음 그룹 짝짓는 타이밍
+        {
+            _index = _index - _length;
+            _index += _length * 2;
+            _checkIndex = _index + _length;
+            _count = 0;
+            _checkCount = 0;
+
+            if(_checkIndex>=_listLength){
+                Debug.Log("length out, No Group");
+            }
+        }
+        else if (_count >= _length)
+        {
+            ChangeElement(swapList1.Count , _checkIndex, swapList2);
+            AddList(ref swapList1, ref swapList2, ref _checkIndex,ref _checkCount);
+
+        }
+        else if (_checkCount >= _length)
+        {
+            ChangeElement(swapList1.Count, _index, swapList2);
+            AddList(ref swapList1, ref swapList2, ref _index, ref _count);
+
+        }
+        else if (_checkIndex >= _listLength)
+        {
+            Debug.Log("loop");
+            //ChangeElement(swapList1.Count, _index, swapList2);
+            //AddList(ref swapList1, ref swapList2, ref _index, ref _count);
+        }
+        else if (swapList2[_index] < swapList2[_checkIndex])
+        {
+            ChangeElement(swapList1.Count, _index, swapList2);
+            AddList(ref swapList1, ref swapList2, ref _index, ref _count);
+
+        }
+        else if (swapList2[_index] >= swapList2[_checkIndex])
+        {
+            ChangeElement(swapList1.Count, _checkIndex, swapList2);
+            AddList(ref swapList1, ref swapList2, ref _checkIndex, ref _checkCount);
+
+        }
+    }
+
+    private void AddList(ref List<int> swapList1, ref List<int> swapList2, ref int idx, ref int cnt){
+        swapList1.Add(swapList2[idx]);
+        idx += 1;
+        cnt += 1;
+    }
+
 
 }

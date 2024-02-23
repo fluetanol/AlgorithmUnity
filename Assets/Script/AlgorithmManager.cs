@@ -28,7 +28,7 @@ public class AlgorithmManager : MonoBehaviour
         _sortInterface = new MergeSort(_sortList, _sortObject);
     }
 
-    void FixedUpdate() {
+    private void FixedUpdate() {
         TimeCheck(ref _time);
         if (_sortInterface.UpdateSort()) {
             UIManager.Instance.SetTimeText("Time : " + _time.ToString());
