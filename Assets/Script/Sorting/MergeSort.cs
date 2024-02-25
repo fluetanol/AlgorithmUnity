@@ -38,14 +38,14 @@ public class MergeSort : SortInterface
 
     public bool UpdateSort()
     {
-        if (_length == _listLength)  return true;
+        if (_length >= _listLength)  return true;
         if(!_isSwap) Merging(ref _swapList1, ref _swapList2);
         else Merging(ref _swapList2, ref _swapList1);   
         return false;
     }
 
     private void Merging(ref List<int> swapList1, ref List<int> swapList2){
-        Debug.Log(_index +" "+_checkIndex + " "+_length+ " "+swapList1);
+        //Debug.Log(_index +" "+_checkIndex + " "+_length+ " "+swapList1);
         if (swapList1.Count == swapList2.Count)       //한 주기가 끝나는 타이밍
         {
             swapList2.Clear();
@@ -85,10 +85,10 @@ public class MergeSort : SortInterface
         }
         else if (_checkIndex >= _listLength)
         {
-            Debug.Log("loop");
-            //ChangeElement(swapList1.Count, _index, swapList2);
-            //AddList(ref swapList1, ref swapList2, ref _index, ref _count);
+            ChangeElement(swapList1.Count, _index, swapList2);
+            AddList(ref swapList1, ref swapList2, ref _index, ref _count);
         }
+
         else if (swapList2[_index] < swapList2[_checkIndex])
         {
             ChangeElement(swapList1.Count, _index, swapList2);
