@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AlgorithmManager : MonoBehaviour
+public class AlgorithmSortingManager : MonoBehaviour
 {
     public GameObject SortObject;
     public List<int> _sortList = new();
@@ -11,7 +11,7 @@ public class AlgorithmManager : MonoBehaviour
     //public AudioSource source;
     //public AudioSource source2;
 
-    public static AlgorithmManager Instance;
+    public static AlgorithmSortingManager Instance;
     public static SortInterface _sortInterface;
 
     private float _time;

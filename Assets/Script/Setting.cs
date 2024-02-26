@@ -8,12 +8,11 @@ public class Setting : MonoBehaviour
     public AudioSource Source;
 
     void Awake(){
-        Application.targetFrameRate = 120;
+        //Application.targetFrameRate = 120;
     }
 
     void Update(){
         if (!Source.isPlaying){
-            print("!!");
             Source.clip = Bgms[Random.Range(0, 2)];
             Source.Play();
         }

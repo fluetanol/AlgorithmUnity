@@ -29,29 +29,29 @@ public class UIManager : MonoBehaviour
     public void SetSort(int flag)
     {
         this.flag = flag;
-        if(!AlgorithmManager.Instance.gameObject.activeSelf) AlgorithmManager.Instance.gameObject.SetActive(true);
-        if(Int32.TryParse(CountInputField.text, out int result)) AlgorithmManager.Instance.InitializeSetting(result);
-        else AlgorithmManager.Instance.InitializeSetting(10);
+        if(!AlgorithmSortingManager.Instance.gameObject.activeSelf) AlgorithmSortingManager.Instance.gameObject.SetActive(true);
+        if(Int32.TryParse(CountInputField.text, out int result)) AlgorithmSortingManager.Instance.InitializeSetting(result);
+        else AlgorithmSortingManager.Instance.InitializeSetting(10);
 
         switch(flag){
             case 0:
             ModeText.text = "Sort: Selection";
-            AlgorithmManager._sortInterface = new SelectionSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            AlgorithmSortingManager._sortInterface = new SelectionSort(AlgorithmSortingManager.Instance._sortList, AlgorithmSortingManager.Instance._sortObject);
             break;
             
             case 1:
             ModeText.text = "Sort: Insertion";
-            AlgorithmManager._sortInterface = new InsertionSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            AlgorithmSortingManager._sortInterface = new InsertionSort(AlgorithmSortingManager.Instance._sortList, AlgorithmSortingManager.Instance._sortObject);
             break;
 
             case 2:
             ModeText.text = "Sort: Bubble";
-            AlgorithmManager._sortInterface = new BubbleSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            AlgorithmSortingManager._sortInterface = new BubbleSort(AlgorithmSortingManager.Instance._sortList, AlgorithmSortingManager.Instance._sortObject);
             break;
 
             case 3:
             ModeText.text = "Sort: Merge";
-            AlgorithmManager._sortInterface = new MergeSort(AlgorithmManager.Instance._sortList, AlgorithmManager.Instance._sortObject);
+            AlgorithmSortingManager._sortInterface = new MergeSort(AlgorithmSortingManager.Instance._sortList, AlgorithmSortingManager.Instance._sortObject);
             break;
             default:
             break;
