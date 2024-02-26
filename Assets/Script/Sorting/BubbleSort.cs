@@ -32,10 +32,10 @@ public class BubbleSort : SortInterface
 
     public bool UpdateSort()
     {
-        Debug.Log(_pivotIndex + " "+_index + " "+ _checkIndex);
+        //Debug.Log(_pivotIndex + " "+_index + " "+ _checkIndex);
 
         if (_pivotIndex >= _sortList.Count - 1) {
-            AlgorithmManager.Instance.source2.pitch = 1;
+            //AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         if (_checkIndex >= _sortList.Count - _pivotIndex) {

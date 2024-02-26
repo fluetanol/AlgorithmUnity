@@ -12,12 +12,14 @@ public class SelectionSort : SortInterface
     private int _minIndex = 0;
     //현재 탐색 위치
     private int _index = 1;
+    private Color color;
 
     public AudioSource source;
 
     public SelectionSort(List<int> sortList, List<GameObject> sortObject){
         _sortList = sortList;
         _sortObject = sortObject;
+        color = _sortObject[0].GetComponentInChildren<MeshRenderer>().material.color;
     }
 
     private void ChangeElement(int pivotIndex, int changeIndex){
@@ -35,24 +37,32 @@ public class SelectionSort : SortInterface
         //_sortObject[_pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
     }
 
+    private void ColorChange(int idx, int before, Color idxColor){
+        _sortObject[idx].GetComponentInChildren<MeshRenderer>().material.color = idxColor;
+        _sortObject[before].GetComponentInChildren<MeshRenderer>().material.color = color;
+    }
+
     public bool UpdateSort()
     {
         if (_pivotIndex == _sortList.Count) {
-            AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         else if (_index == _sortList.Count)
         {
+            ColorChange(_minIndex, _minIndex, Color.clear);
             ChangeElement(_pivotIndex, _minIndex);
-            //AlgorithmManager.Instance.source2.Play();
-            //if(AlgorithmManager.Instance.source2.pitch <= 2) AlgorithmManager.Instance.source2.pitch += 0.01f;
+            if(_pivotIndex+1<_sortList.Count) ColorChange(_pivotIndex + 1, _pivotIndex, Color.red);
+            else ColorChange(_pivotIndex, _pivotIndex, Color.clear);
             _pivotIndex += 1;
             _index = _pivotIndex + 1;
             _minIndex = _pivotIndex;
         }
         else
         {
-            if (_sortList[_index] < _sortList[_minIndex]) _minIndex = _index;
+            if (_sortList[_index] < _sortList[_minIndex]){
+                ColorChange(_index, _minIndex, Color.green);
+                _minIndex = _index;
+            }
             _index += 1;
         }
         return false;

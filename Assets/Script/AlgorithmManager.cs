@@ -8,8 +8,8 @@ public class AlgorithmManager : MonoBehaviour
     public List<int> _sortList = new();
     public List<GameObject> _sortObject = new();
     public int Size = 50;
-    public AudioSource source;
-    public AudioSource source2;
+    //public AudioSource source;
+    //public AudioSource source2;
 
     public static AlgorithmManager Instance;
     public static SortInterface _sortInterface;
@@ -24,20 +24,15 @@ public class AlgorithmManager : MonoBehaviour
     }
 
     void Start(){ 
-        //_sortInterface = new SelectionSort(_sortList, _sortObject);
-        _sortInterface = new MergeSort(_sortList, _sortObject);
+        _sortInterface = new SelectionSort(_sortList, _sortObject);
     }
 
     private void FixedUpdate() {
         TimeCheck(ref _time);
+        if(!_isFinish) UIManager.Instance.SetTimeText("Time : " + _time.ToString());
         if (_sortInterface.UpdateSort()) {
-            UIManager.Instance.SetTimeText("Time : " + _time.ToString());
             UIManager.Instance.SetModeText("Finish!");
-            //if (!_isFinish)
-            //{
-               // StartCoroutine(FinishAnimation());
-            //}
-            gameObject.SetActive(false);   
+            if (!_isFinish)  StartCoroutine(FinishAnimation());     
         }
     }
 
@@ -45,14 +40,11 @@ public class AlgorithmManager : MonoBehaviour
         int i=0;
         _isFinish = true;
         while (i<_sortObject.Count){
-            Color color = (Color.red/_sortObject.Count) * i;
+            Color color = (Color.white/_sortObject.Count) * i;
             _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = color;
-            source.pitch += 0.01f;
-            source.Play();
             i+=1;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
-        source.pitch = 1;
         if (_isFinish == true)_isFinish = false;
         gameObject.SetActive(false);
         yield break;
@@ -72,7 +64,7 @@ public class AlgorithmManager : MonoBehaviour
 
     private void InitializeList(int Size){
         _sortList.Clear();
-        for (int i = 0; i < Size; i++)  _sortList.Add(i);
+        for (int i = 0; i < Size; i++)  _sortList.Add(i+1);
     }
 
     private void InitializeInstantiateObject(List<int> sortList, GameObject InstanceObject)

@@ -39,7 +39,7 @@ public class InsertionSort : SortInterface
                 if(_sortObject[i].GetComponentInChildren<MeshRenderer>().material.color == Color.red) break;
                 _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
             }*/
-            AlgorithmManager.Instance.source2.pitch = 1;
+            //AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         else if(_index == -1 || _sortList[_index]< _sortList[_checkIndex]){
