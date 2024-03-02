@@ -7,6 +7,7 @@ public class AlgorithmTreeManager : MonoBehaviour
     public GameObject ConnectPrefab;
     public static AlgorithmTreeManager Instance;
     public static BinaryTree BinaryTree;
+    public int InitializeValue = 2;
 
     // Start is called before the first frame update
     void Awake(){
@@ -14,9 +15,9 @@ public class AlgorithmTreeManager : MonoBehaviour
         BinaryTree = new();
         GameObject rootObject = Instantiate(NodePrefab);
         rootObject.transform.position = Vector3.zero;
-        rootObject.GetComponent<NodeObjectInfo>().NodeValueText.text = 0.ToString();
+        rootObject.GetComponent<NodeObjectInfo>().NodeValueText.text = InitializeValue.ToString();
         BinaryTree.Root.NodeObject = rootObject;
-        BinaryTree.Root.Value = 0;
+        BinaryTree.Root.Value = InitializeValue;
     }
 
 }
