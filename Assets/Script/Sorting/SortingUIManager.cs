@@ -9,17 +9,16 @@ public enum SortFlag
     Selection
 }
 
-public class UIManager : MonoBehaviour
+public class SortingUIManager : MonoBehaviour
 {
     public TMP_Text TimeText;
     public TMP_Text ModeText;
     public TMP_InputField CountInputField;
-    public static UIManager Instance;
+    public static SortingUIManager Instance;
 
     private int flag = 0;
 
     void Awake() => Instance = this;
-    void OnEnable() => DontDestroyOnLoad(gameObject);
     void Update(){
         if(Input.GetKeyDown(KeyCode.Return)) SetSort(flag);
     }

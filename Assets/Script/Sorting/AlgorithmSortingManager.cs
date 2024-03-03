@@ -20,7 +20,6 @@ public class AlgorithmSortingManager : MonoBehaviour
 
     private void OnEnable(){
         InitializeSetting(Size);
-        DontDestroyOnLoad(this);
     }
 
     void Start(){ 
@@ -29,9 +28,9 @@ public class AlgorithmSortingManager : MonoBehaviour
 
     private void FixedUpdate() {
         TimeCheck(ref _time);
-        if(!_isFinish) UIManager.Instance.SetTimeText("Time : " + _time.ToString());
+        if(!_isFinish) SortingUIManager.Instance.SetTimeText("Time : " + _time.ToString());
         if (_sortInterface.UpdateSort()) {
-            UIManager.Instance.SetModeText("Finish!");
+            SortingUIManager.Instance.SetModeText("Finish!");
             if (!_isFinish)  StartCoroutine(FinishAnimation());     
         }
     }

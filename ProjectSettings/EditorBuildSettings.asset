@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: e4feac7bb75184a4188faafa96dd11d6
+  - enabled: 1
     path: Assets/Scenes/SortScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/TreeScene.unity
+    guid: 58eb2cd032e65334ea2b4b38e83930b6
   m_configObjects: {}
