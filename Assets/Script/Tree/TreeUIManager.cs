@@ -25,9 +25,11 @@ public class TreeUIManager : MonoBehaviour
         if(int.TryParse(inputField.text, out int value)){
             GameObject NodeObject = Instantiate(AlgorithmTreeManager.Instance.NodePrefab);
             GameObject ConnectObject = Instantiate(AlgorithmTreeManager.Instance.ConnectPrefab);
-            Node node = new Node(value);
-            node.NodeObject = NodeObject;
-            node.ConnectObject = ConnectObject;
+            Node node = new Node(){
+                Value = value,
+                NodeObject = NodeObject,
+                ConnectObject = ConnectObject
+            };
             if(AlgorithmTreeManager.BinaryTree.Add(node)){
                 textField.text = "Success Add Node :" + value;
             }
@@ -53,13 +55,32 @@ public class TreeUIManager : MonoBehaviour
         else textField.text = "Wrong Num";
     }
 
+    public void RemoveNode(){
+        if (int.TryParse(inputField.text, out int value))
+        {
+            (GameObject, GameObject) RemoveObject = AlgorithmTreeManager.BinaryTree.Remove(value);
+            if (RemoveObject.Item1 == null) textField.text = "NotFound";
+            else {
+                Destroy(RemoveObject.Item1);
+                Destroy(RemoveObject.Item2);
+                textField.text = "Remove!";
+            }
+        }
+    }
+
+    public void SetRootNodeValue(){
+        if (int.TryParse(inputField.text, out int value) && AlgorithmTreeManager.BinaryTree.GetNodeCount() == 1){
+            AlgorithmTreeManager.BinaryTree.SetRootValue(value);
+        }
+    }
+
     public void PanelNumberMove(bool reverse){
         _traversalOption.GetChild(_traversalOptionNum).gameObject.SetActive(false);
         if (reverse) {
             _traversalOptionNum = (_traversalOptionNum - 1);
-            if(_traversalOptionNum<0) _traversalOptionNum = 2;
+            if(_traversalOptionNum<0) _traversalOptionNum = 3;
         }
-        else _traversalOptionNum = (_traversalOptionNum+1)%3;
+        else _traversalOptionNum = (_traversalOptionNum+1)%4;
         _traversalOption.GetChild(_traversalOptionNum).gameObject.SetActive(true);
     }
 
@@ -78,6 +99,12 @@ public class TreeUIManager : MonoBehaviour
         AlgorithmTreeManager.BinaryTree.PostOrderTraversal();
     }
 
+    public void LevelorderTraversal()
+    {
+        TraversalReset();
+        AlgorithmTreeManager.BinaryTree.LevelorderTraversal();
+    }
+
     public void UpdateInorderTraversal(){
         TraversalReset();
         AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.inorder);
@@ -92,6 +119,13 @@ public class TreeUIManager : MonoBehaviour
         TraversalReset();
         AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.postorder);
     }
+
+    public void UpdateLevelorderTraversal()
+    {
+        TraversalReset();
+        AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.levelorder);
+    }
+
 
     public static void InstantiateNodeInfo(int value){
         GameObject g = Instantiate(_staticNodeInfoPrefab, _staticNodeInfoParent);
