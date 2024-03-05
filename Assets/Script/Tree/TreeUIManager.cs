@@ -47,10 +47,10 @@ public class TreeUIManager : MonoBehaviour
     {
         if (int.TryParse(inputField.text, out int value))
         {
-            Node node = AlgorithmTreeManager.BinaryTree.Find(value);
-            if(node == null)   textField.text = "NotFound";
-            else textField.text = "Find!";
-            
+            if(AlgorithmTreeManager.BinaryTree.isExist(value)){
+                textField.text = "Find!";
+            }
+            else textField.text = "NotFound";
         }
         else textField.text = "Wrong Num";
     }
@@ -107,23 +107,23 @@ public class TreeUIManager : MonoBehaviour
 
     public void UpdateInorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.inorder);
+        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdateInorderTraversal));
     }
 
     public void UpdatePreorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.preorder);
+        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdatePreorderTraversal));
     }
 
     public void UpdatePostorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.postorder);
+        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdatePostorderTraversal));
     }
 
     public void UpdateLevelorderTraversal()
     {
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.levelorder);
+        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdateLevelorderTraversal));
     }
 
 

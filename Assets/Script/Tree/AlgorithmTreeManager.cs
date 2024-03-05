@@ -1,28 +1,17 @@
 using System;
 using UnityEngine;
-
-
-
 public class AlgorithmTreeManager : MonoBehaviour
 {
-    public enum Traversalmode
-    {
-        None,
-        preorder,
-        postorder,
-        inorder,
-        levelorder
-    }
-
     public GameObject NodePrefab;
     public GameObject ConnectPrefab;
     public static AlgorithmTreeManager Instance;
     public static BinaryTree BinaryTree;
     public int InitializeValue = 2;
-
-    private Traversalmode _traversalmode;
     private Node _traversalStartNode;
     private float time;
+
+    public delegate void TraversalDelegate(ref Node node);
+    private TraversalDelegate _traversalDelegate = null;
 
     // Start is called before the first frame update
     void Awake(){
@@ -37,27 +26,11 @@ public class AlgorithmTreeManager : MonoBehaviour
     void FixedUpdate(){
         time += Time.deltaTime;
         if(time<= 0.5f) return;
-
-        switch(_traversalmode){
-            case Traversalmode.inorder:
-                BinaryTree.UpdateInorderTraversal(ref _traversalStartNode);
-                break;
-            case Traversalmode.preorder:
-                BinaryTree.UpdatePreorderTraversal(ref _traversalStartNode);
-                break;
-
-            case Traversalmode.postorder:
-                BinaryTree.UpdatePostorderTraversal(ref _traversalStartNode);
-                break;
-
-            case Traversalmode.levelorder:
-                BinaryTree.UpdateLevelorderTraversal(ref _traversalStartNode);
-                break;
-
-        }
+        if(_traversalDelegate != null) _traversalDelegate(ref _traversalStartNode);
     }
 
-    public void SetTraversalMode(Traversalmode traversalmode) => _traversalmode = traversalmode;
+
+    public void SetTraversalMode(TraversalDelegate traversalDelegate) => _traversalDelegate = traversalDelegate;
     public void RollBackStartNode() => _traversalStartNode = BinaryTree.Root;
     public void RollBackTime () => time = 0;
 }

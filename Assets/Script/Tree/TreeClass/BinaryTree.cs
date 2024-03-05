@@ -1,11 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Xml;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 
 
 public class Node
@@ -41,11 +35,30 @@ public class BinaryTree : TreeInterface{
     }
 
     public bool Add(Node node) =>addNode(node, Root, 1);
+    public (GameObject, GameObject) Remove(int Value) => removeNode(Value, Root);
     public Node Find(int Value) => findNode(Value, Root);
-    public (GameObject,GameObject) Remove(int Value) => removeNode(Value, Root);
-    public void SetRootValue(int value) => Root.Value = value;
+
+    
+    public void SetRootValue(int value){
+        Root.Value = value;
+        Root.NodeObject.GetComponent<NodeObjectInfo>().NodeValueText.text = value.ToString();
+    }
     public int GetNodeCount() => _treeNodeCount;
-    public bool isExist() => false;
+    public bool isExist(int Value){
+        Node node = Find(Value);
+        if(node!=null) {
+            showFindNode(ref node);
+            return true;
+        }
+        else return false;
+    }
+
+
+    public void ResetRecentNode()
+    {
+        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
+        _recentFindNode = null;
+    }
 
 
     private bool addNode(Node node, Node currentNode, int depth){
@@ -78,65 +91,67 @@ public class BinaryTree : TreeInterface{
     private Node findNode(int Value, Node node){
         Node find = null;
         if(node==null)  return null;
-        if(Value == node.Value) {
-            if(_recentFindNode!=null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
-            node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.yellow);
-            _recentFindNode = node;
-            return node;
-        }
+        if(Value == node.Value)  return node;
+        
         if(Value < node.Value) find = findNode(Value, node.left);
         else if(Value > node.Value) find = findNode(Value, node.right);
         return find;
     }
 
-
-    private Node findNode(int Value, Node node, ref bool isLeft)
-    {
-        Node find = null;
-        if (node == null) return null;
-        if (Value == node.Value) return node;
-        if (Value < node.Value) {
-            isLeft = true;
-            find = findNode(Value, node.left,ref isLeft);  
-        }
-        else if (Value > node.Value) {
-            isLeft = false;
-            find = findNode(Value, node.right, ref isLeft);
-        }
-        return find;
+    private void showFindNode(ref Node node){
+        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
+        node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.yellow);
+        _recentFindNode = node;
     }
 
-
-    private (GameObject, GameObject) removeNode(int Value, Node node){
-        bool isLeft = false;
-        Node findnode = findNode(Value, node, ref isLeft);
-
-        if(findnode == Root)  return (Root.NodeObject, null);
+    private (GameObject, GameObject) removeNode(int value, Node node){
+        ResetRecentNode();
+        Node findnode = findNode(value, node);
         if (findnode == null) return (null, null);
         
         GameObject removeObject = null;
         GameObject removeConnectObject = null;
-
-        int count = 0;
+        bool isLeft = false;
+        byte count = 0;
         if(findnode.left !=null) count+=1;
         if(findnode.right!=null) count+=1;
 
-
         removeObject = findnode.NodeObject;
         removeConnectObject = findnode.ConnectObject;
-        if (isLeft) findnode.Parent.left = null;
-        else findnode.Parent.right = null;
         
-        switch (count){
-            case 1:
-                if(findnode.left == null)  OneChildNodeRmoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject,ref removeConnectObject, isLeft);
-                else if(findnode.right == null)  OneChildNodeRmoveUpdate(ref findnode.Parent, ref findnode.left, ref removeObject, ref removeConnectObject, isLeft);
-            break;
+        if(findnode.Parent !=null){
+            if (findnode.Value < findnode.Parent.Value) {
+                isLeft = true;
+                findnode.Parent.left = null;
+            }
+            else{
+                isLeft = false;
+                findnode.Parent.right = null;
+            }
+        }
 
+        switch (count){
+            case 0:
+                //Root노드인데 자식노드도 없어서 지울 이유가 없는 유일한 케이스
+                if (findnode == Root) return (null, null);
+            break;
+            case 1:
+                //왼쪽 노드가 없는 경우 -> 오른쪽 노드를 끌어 올림
+                if(findnode.left == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject,ref removeConnectObject, isLeft);
+                //아닌 경우는 왼쪽 노드를 끌어 올림
+                else if(findnode.right == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.left, ref removeObject, ref removeConnectObject, isLeft);
+            break;
             case 2:
+                if(findnode.Parent !=null){
+                    if(isLeft) findnode.Parent.left = findnode;
+                    else findnode.Parent.right = findnode;
+                }
                 Node smallestNode = findSmallestNode(findnode.right);
-                smallestNode.Parent = findnode.Parent;
-                break;
+                (removeObject, removeConnectObject) = removeNode(smallestNode.Value, smallestNode);
+                _treeNodeCount += 1;
+                findnode.Value = smallestNode.Value;
+                findnode.NodeObject.GetComponent<NodeObjectInfo>().NodeValueText.text = findnode.Value.ToString();
+            break;
         }
         _treeNodeCount-=1;
         return (removeObject, removeConnectObject);
@@ -156,8 +171,7 @@ public class BinaryTree : TreeInterface{
         //좌노드 있는지 + 한번도 안 둘러본 노드가 맞는지 확인
         if (node.left!= null && !treeValue.Contains(node.left.Value)) node= node.left;
         //좌노드는 있는데 이미 둘러본 노드인 경우 (다 둘러봐서 parent로 올라온 경우) 또는 좌노드가 없는 경우
-        else if((node.left != null && treeValue.Contains(node.left.Value)) || node.left == null)
-        {
+        else if((node.left != null && treeValue.Contains(node.left.Value)) || node.left == null){
             if (!treeValue.Contains(node.Value)) UpdateTraversalNodeVisual(ref node);
             //오른쪽에 노드가 있는 케이스, 오른쪽으로 가면 됨.
             if (node.right != null && !treeValue.Contains(node.right.Value)) node = node.right;
@@ -220,24 +234,34 @@ public class BinaryTree : TreeInterface{
     }
 
 
-    public void ResetRecentNode() => _recentFindNode = null;
-
     private Node findSmallestNode(Node node){
         if(node.left == null) return node;
         return findSmallestNode(node.left);
     }
 
 
-    private void OneChildNodeRmoveUpdate(ref Node parent,ref Node child, ref GameObject removeObject,ref  GameObject removeConnectObject, bool isLeft){
-        if(isLeft) parent.left = child;
-        else parent.right = child;
+    private void OneChildNodeRemoveUpdate(ref Node parent,ref Node child, ref GameObject removeObject,ref  GameObject removeConnectObject, bool isLeft){
+        if(parent!=null){
+            if(isLeft) parent.left = child;
+            else parent.right = child;
+        }
 
         child.Parent = parent;
         child.NodeObject.transform.position = removeObject.transform.position;
-        child.NodeObject.transform.parent = parent.NodeObject.transform;
-        child.ConnectObject.transform.parent = parent.NodeObject.transform;
-        child.ConnectObject.transform.position = removeConnectObject.transform.position;
-        child.ConnectObject.transform.rotation = removeConnectObject.transform.rotation;
+        if(parent!=null){
+            child.NodeObject.transform.parent = parent.NodeObject.transform;
+            child.ConnectObject.transform.parent = parent.NodeObject.transform;
+            child.ConnectObject.transform.position = removeConnectObject.transform.position;
+            child.ConnectObject.transform.rotation = removeConnectObject.transform.rotation;
+        }
+        //root를 지우는 경우
+        else{
+            child.NodeObject.transform.parent = null;
+            Root = child;
+            removeConnectObject = child.ConnectObject;
+            AlgorithmTreeManager.Instance.RollBackStartNode();
+        }
+        
     }
 
     private void inorder(Node node){
@@ -268,9 +292,6 @@ public class BinaryTree : TreeInterface{
         if(queue.Count == 0) return;
         levelorder(queue.Dequeue());
     }
-
-
-
 
     //새 노드 추가시 시각적 처리
     private void PlaceNodeObject(ref Node node, ref Node currentNode, bool isLeft, float depth){
@@ -324,7 +345,7 @@ public class BinaryTree : TreeInterface{
     {
         if (isLevelOrder || treeValue.Count == _treeNodeCount)
         {
-            AlgorithmTreeManager.Instance.SetTraversalMode(AlgorithmTreeManager.Traversalmode.None);
+            AlgorithmTreeManager.Instance.SetTraversalMode(null);
             AlgorithmTreeManager.Instance.RollBackStartNode();
             _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
             treeValue.Clear();

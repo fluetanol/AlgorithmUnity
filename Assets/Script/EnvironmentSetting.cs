@@ -13,7 +13,7 @@ public class Setting : MonoBehaviour
 
     void Update(){
         if (!Source.isPlaying){
-            Source.clip = Bgms[Random.Range(0, 2)];
+            Source.clip = Bgms[Random.Range(0, Bgms.Count)];
             Source.Play();
         }
     }
