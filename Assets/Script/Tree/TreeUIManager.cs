@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using Unity.Profiling;
 using UnityEngine;
 
 public class TreeUIManager : MonoBehaviour
@@ -21,6 +18,30 @@ public class TreeUIManager : MonoBehaviour
         _staticNodeInfoParent = _nodeInfoParent;
     }
 
+
+    public void SetNewTree(int num){
+        AlgorithmTreeManager.Instance.SetTraversalMode(null);
+        if(AlgorithmTreeManager.BTree.Root.right!=null){
+            Destroy(AlgorithmTreeManager.BTree.Root.right.NodeObject);
+            Destroy(AlgorithmTreeManager.BTree.Root.right.ConnectObject);
+        }
+        if (AlgorithmTreeManager.BTree.Root.left != null){
+            Destroy(AlgorithmTreeManager.BTree.Root.left.NodeObject);
+            Destroy(AlgorithmTreeManager.BTree.Root.left.ConnectObject);
+        } 
+        AlgorithmTreeManager.BTree.Root.right = null;
+        AlgorithmTreeManager.BTree.Root.left = null;
+
+        Node node = AlgorithmTreeManager.BTree.Root;
+
+        if (num==0)  AlgorithmTreeManager.BTree = new BinarySearchTree(node.NodeObject, 0);
+        else if(num==1) AlgorithmTreeManager.BTree = new AVLTree(node.NodeObject, 0);
+
+        AlgorithmTreeManager.TreeInterface = AlgorithmTreeManager.BTree;
+        AlgorithmTreeManager.Instance.RollBackStartNode();
+    }
+
+
     public void AddNode(){
         if(int.TryParse(inputField.text, out int value)){
             GameObject NodeObject = Instantiate(AlgorithmTreeManager.Instance.NodePrefab);
@@ -30,7 +51,7 @@ public class TreeUIManager : MonoBehaviour
                 NodeObject = NodeObject,
                 ConnectObject = ConnectObject
             };
-            if(AlgorithmTreeManager.BinaryTree.Add(node)){
+            if(AlgorithmTreeManager.BTree.Add(node)){
                 textField.text = "Success Add Node :" + value;
             }
             else{
@@ -47,7 +68,7 @@ public class TreeUIManager : MonoBehaviour
     {
         if (int.TryParse(inputField.text, out int value))
         {
-            if(AlgorithmTreeManager.BinaryTree.isExist(value)){
+            if(AlgorithmTreeManager.BTree.isExist(value)){
                 textField.text = "Find!";
             }
             else textField.text = "NotFound";
@@ -58,7 +79,7 @@ public class TreeUIManager : MonoBehaviour
     public void RemoveNode(){
         if (int.TryParse(inputField.text, out int value))
         {
-            (GameObject, GameObject) RemoveObject = AlgorithmTreeManager.BinaryTree.Remove(value);
+            (GameObject, GameObject) RemoveObject = AlgorithmTreeManager.BTree.Remove(value);
             if (RemoveObject.Item1 == null) textField.text = "NotFound";
             else {
                 Destroy(RemoveObject.Item1);
@@ -69,8 +90,8 @@ public class TreeUIManager : MonoBehaviour
     }
 
     public void SetRootNodeValue(){
-        if (int.TryParse(inputField.text, out int value) && AlgorithmTreeManager.BinaryTree.GetNodeCount() == 1){
-            AlgorithmTreeManager.BinaryTree.SetRootValue(value);
+        if (int.TryParse(inputField.text, out int value) && AlgorithmTreeManager.BTree.GetNodeCount() == 1){
+            AlgorithmTreeManager.BTree.SetRootValue(value);
         }
     }
 
@@ -86,44 +107,44 @@ public class TreeUIManager : MonoBehaviour
 
     public void PreorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.BinaryTree.PreorderTraversal();
+        AlgorithmTreeManager.TreeInterface.PreorderTraversal();
     }
 
     public void InorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.BinaryTree.InorderTraversal();
+        AlgorithmTreeManager.TreeInterface.InorderTraversal();
     }
 
     public void PostorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.BinaryTree.PostOrderTraversal();
+        AlgorithmTreeManager.TreeInterface.PostOrderTraversal();
     }
 
     public void LevelorderTraversal()
     {
         TraversalReset();
-        AlgorithmTreeManager.BinaryTree.LevelorderTraversal();
+        AlgorithmTreeManager.TreeInterface.LevelorderTraversal();
     }
 
     public void UpdateInorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdateInorderTraversal));
+        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdateInorderTraversal));
     }
 
     public void UpdatePreorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdatePreorderTraversal));
+        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdatePreorderTraversal));
     }
 
     public void UpdatePostorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdatePostorderTraversal));
+        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdatePostorderTraversal));
     }
 
     public void UpdateLevelorderTraversal()
     {
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new AlgorithmTreeManager.TraversalDelegate(AlgorithmTreeManager.BinaryTree.UpdateLevelorderTraversal));
+        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdateLevelorderTraversal));
     }
 
 
@@ -134,7 +155,7 @@ public class TreeUIManager : MonoBehaviour
 
     private void TraversalReset(){
         for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--) Destroy(_nodeInfoParent.GetChild(k).gameObject);
-        AlgorithmTreeManager.BinaryTree.ResetRecentNode();
+        AlgorithmTreeManager.BTree.ResetRecentNode();
     }
 
 

@@ -1,16 +1,20 @@
-using System;
 using UnityEngine;
-public class AlgorithmTreeManager : MonoBehaviour
+
+public delegate void TraversalDelegate(ref Node node);
+public sealed class AlgorithmTreeManager : MonoBehaviour
 {
     public GameObject NodePrefab;
     public GameObject ConnectPrefab;
     public static AlgorithmTreeManager Instance;
-    public static BinaryTree BinaryTree;
+
+    public static BinaryTree BTree;
+    public static TreeInterface TreeInterface;
+
     public int InitializeValue = 2;
     private Node _traversalStartNode;
     private float time;
 
-    public delegate void TraversalDelegate(ref Node node);
+
     private TraversalDelegate _traversalDelegate = null;
 
     // Start is called before the first frame update
@@ -18,9 +22,9 @@ public class AlgorithmTreeManager : MonoBehaviour
         Instance = this;
         GameObject rootObject = Instantiate(NodePrefab);
         rootObject.transform.position = Vector3.zero;
-        rootObject.GetComponent<NodeObjectInfo>().NodeValueText.text = InitializeValue.ToString();
-        BinaryTree = new(rootObject, InitializeValue);
-        _traversalStartNode = BinaryTree.Root;
+        BTree = new BinarySearchTree(rootObject, InitializeValue);
+        TreeInterface = BTree;
+        _traversalStartNode = BTree.Root;
     }
 
     void FixedUpdate(){
@@ -31,6 +35,6 @@ public class AlgorithmTreeManager : MonoBehaviour
 
 
     public void SetTraversalMode(TraversalDelegate traversalDelegate) => _traversalDelegate = traversalDelegate;
-    public void RollBackStartNode() => _traversalStartNode = BinaryTree.Root;
+    public void RollBackStartNode() => _traversalStartNode = BTree.Root;
     public void RollBackTime () => time = 0;
 }
