@@ -1,4 +1,6 @@
 
+using Unity.VisualScripting;
+using UnityEditor.UnityLinker;
 using UnityEngine;
 
 public sealed class AVLTree : BinaryTree
@@ -20,7 +22,10 @@ public sealed class AVLTree : BinaryTree
         bool isAdd = addNode(node, Root, 1);
         if(isAdd){
             int bf = UpdateDepth(ref Root);
-            if (Mathf.Abs(bf) >= 2) RightRotation(Root);
+            if (Mathf.Abs(bf) >= 2) {
+                //if(Root.left!=null)  RightRotation(Root, ref Root.left, ref Root.left.right, true);
+                if(Root.right!=null) Rotation(Root, ref Root.right, ref Root.right.left, false);       
+            }
         }
         return isAdd;
     }
@@ -39,7 +44,7 @@ public sealed class AVLTree : BinaryTree
                 if (isFind) {
                     int bf = UpdateDepth(ref currentNode);
                     if(Mathf.Abs(bf)>=2){
-                        RightRotation(currentNode);
+                       // RightRotation(currentNode, ref currentNode.left, ref currentNode.left.right, true);
                     }
                 }
             }
@@ -54,19 +59,18 @@ public sealed class AVLTree : BinaryTree
                 if (isFind) {
                     int bf = UpdateDepth(ref currentNode);
                     if (Mathf.Abs(bf) >= 2){
-                        //LeftRotation(currentNode);
+                        Debug.Log(currentNode.Value + " " + bf);
+                        Rotation(currentNode, ref currentNode.right, ref currentNode.right.left, false);
                     }
                 }
             }
         }
         else if (node.Value == currentNode.Value) return false;
-        //Debug.Log(currentNode.Value);
         return isFind;
     }
 
-    private void RightRotation(Node currentNode){
+    private void RightRotation(Node currentNode ){
         PlaceRotationObject(currentNode);
-
         Node node = currentNode.left.right;
         currentNode.left.right = currentNode;
         currentNode.left.Parent = currentNode.Parent;
@@ -75,13 +79,12 @@ public sealed class AVLTree : BinaryTree
             else currentNode.Parent.left = currentNode.left;
         }
         currentNode.Parent = currentNode.left;
-        //현 노드의 좌노드 설정
         currentNode.left = node;
 
         if (currentNode.left != null) currentNode.left.Parent = currentNode;
         if (currentNode == Root){
             Root = currentNode.Parent;
-            AlgorithmTreeManager.Instance.RollBackStartNode();
+            AlgorithmTreeManager.RollBackStartNode();
             if(Root.Parent == null) Debug.Log("good");
         }
         currentNode = currentNode.Parent;
@@ -91,8 +94,42 @@ public sealed class AVLTree : BinaryTree
     }
 
 
-    private void LeftRotation(ref Node currentNode){
 
+    private void Rotation(Node currentNode, ref  Node currentleft, ref Node currentLeftRight, bool isRR)
+    {
+        currentNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.blue);
+        PlaceRotationObject(currentNode, ref currentleft, ref currentLeftRight, isRR);
+
+        Node node = currentLeftRight;
+        currentLeftRight = currentNode;
+        currentleft.Parent = currentNode.Parent;
+        if (currentNode.Parent != null)
+        {
+            if (currentNode.Parent.Value < currentleft.Value) currentNode.Parent.right = currentleft;
+            else currentNode.Parent.left = currentleft;
+        }
+        currentNode.Parent = currentleft;
+        currentleft = node;
+
+        if (currentleft != null) currentleft.Parent = currentNode;
+        if (currentNode == Root)
+        {
+            Root = currentNode.Parent;
+            AlgorithmTreeManager.RollBackStartNode();
+            if (Root.Parent == null) Debug.Log("good");
+        }
+
+        currentNode = currentNode.Parent;
+
+        if (isRR) UpdateAllDepth(ref currentNode.right);
+        else UpdateAllDepth(ref currentNode.left);
+
+        /*
+        if (isRR) UpdateDepth(ref currentNode.right);
+        else UpdateDepth(ref currentNode.left);
+
+        UpdateDepth(ref currentNode);
+        */
     }
 
 
@@ -128,10 +165,51 @@ public sealed class AVLTree : BinaryTree
             currentNode.left.right.NodeObject.transform.position = ConnectInfo.EndPoint.position;
             
         }
-
-
         currentNode.left.NodeObject.transform.position = currentPosition;
     }
+
+
+    private void PlaceRotationObject(Node currentNode, ref Node currentleft, ref Node currentleftright, bool isRR)
+    {
+        currentleft.NodeObject.transform.SetParent(currentNode.NodeObject.transform.parent);
+
+        Vector3 currentPosition = currentNode.NodeObject.transform.position;
+        GameObject currentConnectObject = currentNode.ConnectObject;
+        currentNode.ConnectObject = currentleft.ConnectObject;
+        currentleft.ConnectObject = currentConnectObject;
+
+        var ConnectInfo = currentNode.ConnectObject.GetComponent<NodeConnectObejctInfo>();
+        var ParentNodeInfo = currentleft.NodeObject.GetComponent<NodeObjectInfo>();
+        currentNode.NodeObject.transform.parent = currentleft.NodeObject.transform;
+        currentNode.ConnectObject.transform.parent = currentleft.NodeObject.transform;
+
+        currentNode.ConnectObject.transform.eulerAngles = -currentNode.ConnectObject.transform.eulerAngles;
+        Vector3 a = ConnectInfo.transform.position;
+        Vector3 b = ConnectInfo.StartPoint.position;
+        if(isRR) ConnectInfo.transform.position = ParentNodeInfo.rightNodePoint.position + (a - b);
+        else ConnectInfo.transform.position = ParentNodeInfo.leftNodePoint.position + (a - b);
+        currentNode.NodeObject.transform.position = ConnectInfo.EndPoint.position;
+
+
+        if (currentleftright != null)
+        {
+
+            currentleftright.NodeObject.transform.parent = currentNode.NodeObject.transform;
+            currentleftright.ConnectObject.transform.parent = currentNode.NodeObject.transform;
+            currentleftright.ConnectObject.transform.eulerAngles = -currentleftright.ConnectObject.transform.eulerAngles;
+            ConnectInfo = currentleftright.ConnectObject.GetComponent<NodeConnectObejctInfo>();
+            ParentNodeInfo = currentNode.NodeObject.GetComponent<NodeObjectInfo>();
+            a = ConnectInfo.transform.position;
+            b = ConnectInfo.StartPoint.position;
+
+            if (isRR) ConnectInfo.transform.position = ParentNodeInfo.leftNodePoint.position + (a - b);
+            else ConnectInfo.transform.position = ParentNodeInfo.rightNodePoint.position + (a - b);
+            currentleftright.NodeObject.transform.position = ConnectInfo.EndPoint.position;
+
+        }
+        currentleft.NodeObject.transform.position = currentPosition;
+    }
+
 
 
 
@@ -160,14 +238,22 @@ public sealed class AVLTree : BinaryTree
         nodeInfo.DepthText.text = "0";
     }
 
+
+    private void UpdateAllDepth(ref Node node){
+        UpdateDepth(ref node);
+        if (node == Root) return;
+        UpdateAllDepth(ref node.Parent);
+    }
+
     private int UpdateDepth(ref Node node){
         var nodeInfo = node.NodeObject.GetComponent<NodeObjectInfo>();
 
-        if(node.left == null && node.right == null){
+        Debug.Log(node.Value);
+        
+        if (node.left == null && node.right == null){
             node.Depth = node.Parent.Depth - 1;
             node.BF = 0;
         }
-
         else if(node.left == null) {
             node.Depth = node.right.Depth + 1;
             node.BF = -node.right.Depth -1;
@@ -176,7 +262,7 @@ public sealed class AVLTree : BinaryTree
             node.Depth = node.left.Depth + 1;
             node.BF = node.left.Depth +1;
         }
-        else if(node.left.Depth>=node.right.Depth) {
+        else if(node.left.Depth>node.right.Depth) {
             node.Depth = node.left.Depth +1;
             node.BF = node.left.Depth - node.right.Depth;
 

@@ -144,7 +144,7 @@ public sealed class BinarySearchTree : BinaryTree{
             child.NodeObject.transform.parent = null;
             Root = child;
             removeConnectObject = child.ConnectObject;
-            AlgorithmTreeManager.Instance.RollBackStartNode();
+            AlgorithmTreeManager.RollBackStartNode();
         }
     }
 

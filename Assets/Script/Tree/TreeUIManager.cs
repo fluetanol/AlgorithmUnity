@@ -3,72 +3,57 @@ using UnityEngine;
 
 public class TreeUIManager : MonoBehaviour
 {
-    [SerializeField] private TMP_InputField inputField;
-    [SerializeField] private TMP_Text textField;
-    [SerializeField] private GameObject _nodeInfoPrefab;
-    [SerializeField] private Transform _nodeInfoParent;
-    [SerializeField] private Transform _traversalOption;
+    [SerializeField] private TMP_InputField     inputField;
+    [SerializeField] private TMP_Text           textField;
+    [SerializeField] private GameObject         _nodeInfoPrefab;
+    [SerializeField] private Transform          _nodeInfoParent;
+    [SerializeField] private Transform          _traversalOption;
 
-    private static GameObject _staticNodeInfoPrefab;
-    private static Transform _staticNodeInfoParent;
-    private int _traversalOptionNum = 0;
+    private static           GameObject         _staticNodeInfoPrefab;
+    private static           Transform          _staticNodeInfoParent;
+    
+    private                 ITreeTraversal       _treeTraversal;
+    private                 ITreeManage          _treeManage;
+    private                 INodeManage          _nodeManage;
+    private                 int                 _traversalOptionNum = 0;
+
+
+    private void Awake(){
+        AlgorithmTreeManager treeManager = FindObjectOfType<AlgorithmTreeManager>();
+        _treeManage = treeManager;
+        _nodeManage = treeManager;
+        _treeTraversal = treeManager;
+    }
 
     private void OnEnable() {
         _staticNodeInfoPrefab = _nodeInfoPrefab;
         _staticNodeInfoParent = _nodeInfoParent;
     }
 
-
     public void SetNewTree(int num){
-        AlgorithmTreeManager.Instance.SetTraversalMode(null);
-        if(AlgorithmTreeManager.BTree.Root.right!=null){
-            Destroy(AlgorithmTreeManager.BTree.Root.right.NodeObject);
-            Destroy(AlgorithmTreeManager.BTree.Root.right.ConnectObject);
-        }
-        if (AlgorithmTreeManager.BTree.Root.left != null){
-            Destroy(AlgorithmTreeManager.BTree.Root.left.NodeObject);
-            Destroy(AlgorithmTreeManager.BTree.Root.left.ConnectObject);
-        } 
-        AlgorithmTreeManager.BTree.Root.right = null;
-        AlgorithmTreeManager.BTree.Root.left = null;
-
-        Node node = AlgorithmTreeManager.BTree.Root;
-
-        if (num==0)  AlgorithmTreeManager.BTree = new BinarySearchTree(node.NodeObject, 0);
-        else if(num==1) AlgorithmTreeManager.BTree = new AVLTree(node.NodeObject, 0);
-
-        AlgorithmTreeManager.TreeInterface = AlgorithmTreeManager.BTree;
-        AlgorithmTreeManager.Instance.RollBackStartNode();
+        _treeManage.SetNewTree(num);
     }
-
 
     public void AddNode(){
         if(int.TryParse(inputField.text, out int value)){
-            GameObject NodeObject = Instantiate(AlgorithmTreeManager.Instance.NodePrefab);
-            GameObject ConnectObject = Instantiate(AlgorithmTreeManager.Instance.ConnectPrefab);
-            Node node = new Node(){
-                Value = value,
-                NodeObject = NodeObject,
-                ConnectObject = ConnectObject
-            };
-            if(AlgorithmTreeManager.BTree.Add(node)){
+            Node node = _nodeManage.NewNode(value);
+            
+            if(_nodeManage.AddNode(node)){
                 textField.text = "Success Add Node :" + value;
             }
             else{
                 textField.text = "Fail Add Node :" + value;
-                Destroy(NodeObject);
-                Destroy(ConnectObject);
+                Destroy(node.NodeObject);
+                Destroy(node.ConnectObject);
             }
-
         }
         else textField.text = "Wrong Num";
-        
     }
-    public void FindNode()
-    {
+
+    public void FindNode(){
         if (int.TryParse(inputField.text, out int value))
         {
-            if(AlgorithmTreeManager.BTree.isExist(value)){
+            if(_nodeManage.IsExistNode(value)){
                 textField.text = "Find!";
             }
             else textField.text = "NotFound";
@@ -79,7 +64,7 @@ public class TreeUIManager : MonoBehaviour
     public void RemoveNode(){
         if (int.TryParse(inputField.text, out int value))
         {
-            (GameObject, GameObject) RemoveObject = AlgorithmTreeManager.BTree.Remove(value);
+            (GameObject, GameObject) RemoveObject = _nodeManage.RemoveNode(value);
             if (RemoveObject.Item1 == null) textField.text = "NotFound";
             else {
                 Destroy(RemoveObject.Item1);
@@ -90,8 +75,8 @@ public class TreeUIManager : MonoBehaviour
     }
 
     public void SetRootNodeValue(){
-        if (int.TryParse(inputField.text, out int value) && AlgorithmTreeManager.BTree.GetNodeCount() == 1){
-            AlgorithmTreeManager.BTree.SetRootValue(value);
+        if (int.TryParse(inputField.text, out int value) && _treeManage.GetTreeNodeCount() == 1){
+            _treeManage.SetRootValue(value);
         }
     }
 
@@ -107,44 +92,44 @@ public class TreeUIManager : MonoBehaviour
 
     public void PreorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.TreeInterface.PreorderTraversal();
+        _treeTraversal.PreOrderTraversal();
     }
 
     public void InorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.TreeInterface.InorderTraversal();
+        _treeTraversal.InOrderTraversal();
     }
 
     public void PostorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.TreeInterface.PostOrderTraversal();
+        _treeTraversal.PostOrderTraversal();
     }
 
     public void LevelorderTraversal()
     {
         TraversalReset();
-        AlgorithmTreeManager.TreeInterface.LevelorderTraversal();
+        _treeTraversal.LevelOrderTraversal();
     }
 
     public void UpdateInorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdateInorderTraversal));
+        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdateInorderTraversal));
     }
 
     public void UpdatePreorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdatePreorderTraversal));
+        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdatePreorderTraversal));
     }
 
     public void UpdatePostorderTraversal(){
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdatePostorderTraversal));
+        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdatePostorderTraversal));
     }
 
     public void UpdateLevelorderTraversal()
     {
         TraversalReset();
-        AlgorithmTreeManager.Instance.SetTraversalMode(new TraversalDelegate(AlgorithmTreeManager.TreeInterface.UpdateLevelorderTraversal));
+        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdateLevelorderTraversal));
     }
 
 
@@ -155,7 +140,7 @@ public class TreeUIManager : MonoBehaviour
 
     private void TraversalReset(){
         for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--) Destroy(_nodeInfoParent.GetChild(k).gameObject);
-        AlgorithmTreeManager.BTree.ResetRecentNode();
+        _treeManage.ResetRecentNode();
     }
 
 

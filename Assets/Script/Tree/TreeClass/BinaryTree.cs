@@ -1,11 +1,11 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
-public abstract class BinaryTree : TreeInterface
-{
+public abstract class BinaryTree{
     public Node Root;
-
     protected Node _recentFindNode = null;
     protected Color _originNodeColor;
     protected Queue<Node> queue = new();
@@ -23,6 +23,7 @@ public abstract class BinaryTree : TreeInterface
         if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
         _recentFindNode = null;
     }
+
     public virtual void SetRootValue(int value){
         Root.Value = value;
         Root.NodeObject.GetComponent<NodeObjectInfo>().NodeValueText.text = value.ToString();
@@ -81,6 +82,26 @@ public abstract class BinaryTree : TreeInterface
             else node = node.Parent;
         }
     }
+
+    /* 실험중
+    TODO: 코루틴으로 inorder traversal 구현
+    public void CoroutineInorderTraversal(){
+        
+    }
+
+
+    private IEnumerator inorder(Node node){
+        if (node == null) yield break;
+
+        yield return inorder(node.left);
+
+        TreeUIManager.InstantiateNodeInfo(node.Value);
+        yield return null;
+
+        yield return inorder(node.right);
+    }*/
+
+
 
     //절차적인 preOrder
     public void UpdatePreorderTraversal(ref Node node)
@@ -170,7 +191,7 @@ public abstract class BinaryTree : TreeInterface
 
     private void UpdateTraversalNodeVisual(ref Node node)
     {
-        AlgorithmTreeManager.Instance.RollBackTime();
+        AlgorithmTreeManager.RollBackTime();
         TreeUIManager.InstantiateNodeInfo(node.Value);
         if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
         node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.cyan);
@@ -182,12 +203,14 @@ public abstract class BinaryTree : TreeInterface
     {
         if (isLevelOrder || treeValue.Count == _treeNodeCount)
         {
-            AlgorithmTreeManager.Instance.SetTraversalMode(null);
-            AlgorithmTreeManager.Instance.RollBackStartNode();
+            AlgorithmTreeManager.SetTraversalMode(null);
+            AlgorithmTreeManager.RollBackStartNode();
             _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
             treeValue.Clear();
             return true;
         }
         else return false;
     }
+
+
 }
