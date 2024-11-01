@@ -1,10 +1,22 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public delegate void TraversalDelegate(ref Node node);
 
+[Serializable]
+public enum TraversalMode{
+    PreOrder = 0,
+    PostOrder = 1,
+    InOrder = 2,
+    LevelOrder = 3
+}
+
+
 public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeManage, ITreeTraversal{
     [SerializeField] private GameObject       _nodePrefab;
     [SerializeField] private GameObject       _connectPrefab;
+    [SerializeField] private float            _perSec;    
 
     public static            GameObject       NodePrefab;
     public static            GameObject       ConnectPrefab;
@@ -13,9 +25,9 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
     private static           BinaryTree         BTree;
     private static           Node              _traversalStartNode;
-    private static           TraversalDelegate _traversalDelegate = null;
-    private static           float             time;
     
+    public static IEnumerator enumerateTraversal;
+    private Coroutine _traversalCoroutine;
 
     // Start is called before the first frame update
     void Awake(){
@@ -26,22 +38,14 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         rootObject.transform.position = Vector3.zero;
         BTree = new BinarySearchTree(rootObject, InitializeValue);
         _traversalStartNode = BTree.Root;
+        enumerateTraversal = BTree.CoroutineInorderTraversal(_traversalStartNode, _perSec);
     }
 
-    void FixedUpdate(){
-        time += Time.deltaTime;
-        if(time<= 0.5f) return;
-        if(_traversalDelegate != null) _traversalDelegate(ref _traversalStartNode);
-    }
-
-    public static void SetTraversalMode(TraversalDelegate traversalDelegate) => _traversalDelegate = traversalDelegate;
     public static void RollBackStartNode()                                   => _traversalStartNode = BTree.Root;
-    public static void RollBackTime()                                        => time = 0;
-
-
 
     public void ResetRecentNode() => BTree.ResetRecentNode();
     public void SetRootValue(int value) => BTree.SetRootValue(value);
+
     public void SetNewTree(int num)
     {
         SetTraversalMode(null);
@@ -79,22 +83,50 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         return node;
     }
 
-
     public bool AddNode(Node node)                        => BTree.Add(node);
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
     public bool IsExistNode(int value)                    => BTree.isExist(value);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();
-    public void InOrderTraversal()                        => BTree.InorderTraversal();
-    public void PreOrderTraversal()                       => BTree.PreorderTraversal();
-    public void PostOrderTraversal()                      => BTree.PostOrderTraversal();
-    public void LevelOrderTraversal()                     => BTree.LevelorderTraversal();
+
+    public void SetTraversalMode(TraversalMode? mode){
+        if(mode == null) return;
+        switch(mode){
+            case TraversalMode.InOrder:
+                enumerateTraversal = BTree.CoroutineInorderTraversal(_traversalStartNode, _perSec);;
+                break;
+            case TraversalMode.PreOrder:
+                enumerateTraversal = BTree.CoroutinePreorderTraversal(_traversalStartNode, _perSec);
+                break;
+            case TraversalMode.PostOrder:
+                enumerateTraversal = BTree.CoroutinePostorderTraversal(_traversalStartNode, _perSec);
+                break;
+            case TraversalMode.LevelOrder:
+                enumerateTraversal = BTree.CoroutineLevelorderTraversal(_traversalStartNode, _perSec);
+                break;
+        }
+    }
 
 
-    public void UpdateInorderTraversal(ref Node node)     => BTree.UpdateInorderTraversal(ref node);
-    public void UpdatePreorderTraversal(ref Node node)    => BTree.UpdatePreorderTraversal(ref node);
-    public void UpdatePostorderTraversal(ref Node node)   => BTree.UpdatePostorderTraversal(ref node);
-    public void UpdateLevelorderTraversal(ref Node node)  => BTree.UpdateLevelorderTraversal(ref node);
+    public void EnumerateCoroutineTraversal(){
+        if(_traversalCoroutine != null){
+            StopCoroutine(_traversalCoroutine);
+            TraversalReset();
+        }
+        _traversalCoroutine = StartCoroutine(enumerateTraversal);
+    }
 
+
+    public void EnumerateStepTraversal(){
+        if(!enumerateTraversal.MoveNext()){
+            TraversalReset();
+        }
+    }
+
+    private void TraversalReset(){
+        ResetRecentNode();
+        RollBackStartNode();
+        BTree.LevelOrderQueueReset();
+    }
 }
     
 

@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +20,8 @@ public abstract class BinaryTree{
 
 
     public virtual void ResetRecentNode(){
-        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
+        if (_recentFindNode != null) 
+        _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
         _recentFindNode = null;
     }
 
@@ -66,94 +67,91 @@ public abstract class BinaryTree{
     public void InorderTraversal() => inOrder(Root);
     public void LevelorderTraversal() => levelOrder(Root);
 
-    //절차적인 inordertraversal
-    public void UpdateInorderTraversal(ref Node node)
+
+    public IEnumerator CoroutineInorderTraversal(Node node, float seconds)
     {
-        //탐색 끝
-        if (checkUpdateTraversalFinish(false)) return;
-        //좌노드 있는지 + 한번도 안 둘러본 노드가 맞는지 확인
-        if (node.left != null && !treeValue.Contains(node.left.Value)) node = node.left;
-        //좌노드는 있는데 이미 둘러본 노드인 경우 (다 둘러봐서 parent로 올라온 경우) 또는 좌노드가 없는 경우
-        else if ((node.left != null && treeValue.Contains(node.left.Value)) || node.left == null)
-        {
-            if (!treeValue.Contains(node.Value)) UpdateTraversalNodeVisual(ref node);
-            //오른쪽에 노드가 있는 케이스, 오른쪽으로 가면 됨.
-            if (node.right != null && !treeValue.Contains(node.right.Value)) node = node.right;
-            else node = node.Parent;
+        if (node == null){
+            yield break;
         }
-    }
 
-    /* 실험중
-    TODO: 코루틴으로 inorder traversal 구현
-    public void CoroutineInorderTraversal(){
-        
-    }
-
-
-    private IEnumerator inorder(Node node){
-        if (node == null) yield break;
-
-        yield return inorder(node.left);
-
-        TreeUIManager.InstantiateNodeInfo(node.Value);
-        yield return null;
-
-        yield return inorder(node.right);
-    }*/
-
-
-
-    //절차적인 preOrder
-    public void UpdatePreorderTraversal(ref Node node)
-    {
-        //탐색 끝
-        if (checkUpdateTraversalFinish(false)) return;
-        if (node != null && !treeValue.Contains(node.Value)) UpdateTraversalNodeVisual(ref node);
-
-        //좌노드 있는지 + 한번도 안 둘러본 노드가 맞는지 확인
-        if (node.left != null && !treeValue.Contains(node.left.Value)) node = node.left;
-        //좌노드는 있는데 이미 둘러본 노드인 경우 (다 둘러봐서 parent로 올라온 경우) 또는 좌노드가 없는 경우
-        else if ((node.left != null && treeValue.Contains(node.left.Value)) || node.left == null)
-        {
-            //오른쪽에 노드가 있는 케이스, 오른쪽으로 가고 그 노드를 포함시킴
-            if (node.right != null && !treeValue.Contains(node.right.Value)) node = node.right;
-            else node = node.Parent;
+        IEnumerator leftenumerator = CoroutineInorderTraversal(node.left, seconds);
+        while(leftenumerator.MoveNext()){
+            yield return new WaitForSeconds(seconds);
         }
-    }
 
-
-    public void UpdatePostorderTraversal(ref Node node)
-    {
-        if (checkUpdateTraversalFinish(false)) return;
-
-        //좌노드 있는지 + 한번도 안 둘러본 노드가 맞는지 확인
-        if (node.left != null && !treeValue.Contains(node.left.Value)) node = node.left;
-
-        //좌노드는 있는데 이미 둘러본 노드인 경우 (다 둘러봐서 parent로 올라온 경우) 또는 좌노드가 없는 경우
-        else if ((node.left != null && treeValue.Contains(node.left.Value)) || node.left == null)
-        {
-            //오른쪽에 노드가 있는 케이스, 오른쪽으로 가고 그 노드를 포함시킴
-            if (node.right != null && !treeValue.Contains(node.right.Value)) node = node.right;
-            else
-            {
-                UpdateTraversalNodeVisual(ref node);
-                node = node.Parent;
-            }
-        }
-    }
-
-    public void UpdateLevelorderTraversal(ref Node node)
-    {
         UpdateTraversalNodeVisual(ref node);
+        yield return new WaitForSeconds(seconds);
 
+        IEnumerator rightenumerator = CoroutineInorderTraversal(node.right, seconds);
+        while(rightenumerator.MoveNext())
+            yield return new WaitForSeconds(seconds);
+
+    }
+
+
+    public IEnumerator CoroutinePostorderTraversal(Node node, float seconds)
+    {
+        if (node == null){
+            yield break;
+        }
+
+        IEnumerator leftenumerator = CoroutinePostorderTraversal(node.left, seconds);
+        while(leftenumerator.MoveNext()){
+            yield return new WaitForSeconds(seconds);
+        }
+        
+
+        IEnumerator rightenumerator = CoroutinePostorderTraversal(node.right, seconds); 
+        while(rightenumerator.MoveNext()){
+            yield return new WaitForSeconds(seconds);
+        }
+           
+
+        UpdateTraversalNodeVisual(ref node);
+        yield return new WaitForSeconds(seconds);
+    }
+
+    public IEnumerator CoroutinePreorderTraversal(Node node, float seconds)
+    {
+        if (node == null){
+            yield break;
+        }
+
+        UpdateTraversalNodeVisual(ref node);
+        yield return new WaitForSeconds(seconds);
+
+        IEnumerator leftenumerator = CoroutinePreorderTraversal(node.left, seconds);
+        while(leftenumerator.MoveNext()){
+            yield return new WaitForSeconds(seconds);
+        }
+
+        IEnumerator rightenumerator = CoroutinePreorderTraversal(node.right, seconds);
+        while(rightenumerator.MoveNext()){
+            yield return new WaitForSeconds(seconds);
+        }
+
+    }
+    /*
+    private void levelOrder(Node node)
+    {
+        TreeUIManager.InstantiateNodeInfo(node.Value);
         if (node.left != null) queue.Enqueue(node.left);
         if (node.right != null) queue.Enqueue(node.right);
-        if (queue.Count == 0)
-        {
-            checkUpdateTraversalFinish(true);
-            return;
-        }
-        node = queue.Dequeue();
+        if (queue.Count == 0) return;
+        levelOrder(queue.Dequeue());
+    }*/
+
+    public IEnumerator CoroutineLevelorderTraversal(Node node, float seconds)
+    {
+        UpdateTraversalNodeVisual(ref node);
+        yield return new WaitForSeconds(seconds);
+        if (node.left != null) queue.Enqueue(node.left);
+        if (node.right != null) queue.Enqueue(node.right);
+        if (queue.Count == 0) yield break;
+
+        IEnumerator enumerator = CoroutineLevelorderTraversal(queue.Dequeue(), seconds);
+        while(enumerator.MoveNext())
+            yield return new WaitForSeconds(seconds);
     }
 
     private void inOrder(Node node)
@@ -191,7 +189,6 @@ public abstract class BinaryTree{
 
     private void UpdateTraversalNodeVisual(ref Node node)
     {
-        AlgorithmTreeManager.RollBackTime();
         TreeUIManager.InstantiateNodeInfo(node.Value);
         if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
         node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.cyan);
@@ -199,6 +196,11 @@ public abstract class BinaryTree{
         treeValue.Add(node.Value);
     }
 
+    public void LevelOrderQueueReset(){
+        queue.Clear();
+    }
+
+/*
     private bool checkUpdateTraversalFinish(bool isLevelOrder)
     {
         if (isLevelOrder || treeValue.Count == _treeNodeCount)
@@ -211,6 +213,6 @@ public abstract class BinaryTree{
         }
         else return false;
     }
-
+*/
 
 }

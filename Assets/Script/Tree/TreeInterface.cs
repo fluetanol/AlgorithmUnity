@@ -1,5 +1,5 @@
-using UnityEngine.Rendering;
 using UnityEngine;
+
 
 
 public interface ITreeManage
@@ -20,13 +20,7 @@ public interface INodeManage
 
 public interface ITreeTraversal
 {
-    public void InOrderTraversal();
-    public void PreOrderTraversal();
-    public void PostOrderTraversal();
-    public void LevelOrderTraversal();
-
-    public void UpdateInorderTraversal(ref Node node);
-    public void UpdatePreorderTraversal(ref Node node);
-    public void UpdatePostorderTraversal(ref Node node);
-    public void UpdateLevelorderTraversal(ref Node node);
+    public void SetTraversalMode(TraversalMode? mode);
+    public void EnumerateStepTraversal();
+    public void EnumerateCoroutineTraversal();
 }

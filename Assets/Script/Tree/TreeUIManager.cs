@@ -17,6 +17,7 @@ public class TreeUIManager : MonoBehaviour
     private                 INodeManage          _nodeManage;
     private                 int                 _traversalOptionNum = 0;
 
+    private                 TraversalMode        _currentMode = TraversalMode.PreOrder;
 
     private void Awake(){
         AlgorithmTreeManager treeManager = FindObjectOfType<AlgorithmTreeManager>();
@@ -90,56 +91,33 @@ public class TreeUIManager : MonoBehaviour
         _traversalOption.GetChild(_traversalOptionNum).gameObject.SetActive(true);
     }
 
-    public void PreorderTraversal(){
-        TraversalReset();
-        _treeTraversal.PreOrderTraversal();
+    public void StepTraversal(int mode){
+        if(_currentMode != (TraversalMode)mode){
+            TraversalReset();
+            _currentMode = (TraversalMode)mode;
+            _treeTraversal.SetTraversalMode(_currentMode);
+        }
+        _treeTraversal.EnumerateStepTraversal();
     }
 
-    public void InorderTraversal(){
-        TraversalReset();
-        _treeTraversal.InOrderTraversal();
-    }
+    public void UpdateTraversal(int mode){
 
-    public void PostorderTraversal(){
-        TraversalReset();
-        _treeTraversal.PostOrderTraversal();
+            TraversalReset();
+            _currentMode = (TraversalMode)mode;
+            _treeTraversal.SetTraversalMode(_currentMode);
+        
+        _treeTraversal.EnumerateCoroutineTraversal();
     }
-
-    public void LevelorderTraversal()
-    {
-        TraversalReset();
-        _treeTraversal.LevelOrderTraversal();
-    }
-
-    public void UpdateInorderTraversal(){
-        TraversalReset();
-        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdateInorderTraversal));
-    }
-
-    public void UpdatePreorderTraversal(){
-        TraversalReset();
-        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdatePreorderTraversal));
-    }
-
-    public void UpdatePostorderTraversal(){
-        TraversalReset();
-        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdatePostorderTraversal));
-    }
-
-    public void UpdateLevelorderTraversal()
-    {
-        TraversalReset();
-        AlgorithmTreeManager.SetTraversalMode(new TraversalDelegate(_treeTraversal.UpdateLevelorderTraversal));
-    }
-
 
     public static void InstantiateNodeInfo(int value){
         GameObject g = Instantiate(_staticNodeInfoPrefab, _staticNodeInfoParent);
         g.GetComponent<TMP_Text>().text =value.ToString();
     }
 
+    //시각적 처리 초기화
     private void TraversalReset(){
-        for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--) Destroy(_nodeInfoParent.GetChild(k).gameObject);
+        for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--) 
+            Destroy(_nodeInfoParent.GetChild(k).gameObject);
         _treeManage.ResetRecentNode();
     }
 
