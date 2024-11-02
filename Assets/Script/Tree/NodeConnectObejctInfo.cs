@@ -6,4 +6,7 @@ public class NodeConnectObejctInfo : MonoBehaviour
 {
     public Transform StartPoint;
     public Transform EndPoint;
+
+
+    
 }

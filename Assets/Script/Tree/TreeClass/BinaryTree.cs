@@ -21,7 +21,7 @@ public abstract class BinaryTree{
 
     public virtual void ResetRecentNode(){
         if (_recentFindNode != null) 
-        _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
+        _recentFindNode.NodeObject.GetComponent<SpriteRenderer>().color = _originNodeColor;
         _recentFindNode = null;
     }
 
@@ -58,8 +58,6 @@ public abstract class BinaryTree{
         ChildNodeInfo.transform.position = ConnectInfo.EndPoint.transform.position;
         ChildNodeInfo.NodeValueText.text = node.Value.ToString();
     }
-
-
 
     public int GetNodeCount() => _treeNodeCount;
     public void PostOrderTraversal() => postOrder(Root);
@@ -129,17 +127,8 @@ public abstract class BinaryTree{
         while(rightenumerator.MoveNext()){
             yield return new WaitForSeconds(seconds);
         }
-
     }
-    /*
-    private void levelOrder(Node node)
-    {
-        TreeUIManager.InstantiateNodeInfo(node.Value);
-        if (node.left != null) queue.Enqueue(node.left);
-        if (node.right != null) queue.Enqueue(node.right);
-        if (queue.Count == 0) return;
-        levelOrder(queue.Dequeue());
-    }*/
+
 
     public IEnumerator CoroutineLevelorderTraversal(Node node, float seconds)
     {
@@ -190,8 +179,8 @@ public abstract class BinaryTree{
     private void UpdateTraversalNodeVisual(ref Node node)
     {
         TreeUIManager.InstantiateNodeInfo(node.Value);
-        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
-        node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.cyan);
+        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<SpriteRenderer>().color = _originNodeColor;
+        node.NodeObject.GetComponent<SpriteRenderer>().color = Color.cyan;
         _recentFindNode = node;
         treeValue.Add(node.Value);
     }

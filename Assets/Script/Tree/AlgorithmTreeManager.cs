@@ -38,6 +38,8 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         rootObject.transform.position = Vector3.zero;
         BTree = new BinarySearchTree(rootObject, InitializeValue);
         _traversalStartNode = BTree.Root;
+
+        
         enumerateTraversal = BTree.CoroutineInorderTraversal(_traversalStartNode, _perSec);
     }
 
@@ -87,6 +89,7 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
     public bool IsExistNode(int value)                    => BTree.isExist(value);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();
+
 
     public void SetTraversalMode(TraversalMode? mode){
         if(mode == null) return;

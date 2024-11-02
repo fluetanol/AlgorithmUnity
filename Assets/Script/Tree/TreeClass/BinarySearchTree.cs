@@ -8,7 +8,7 @@ public sealed class BinarySearchTree : BinaryTree{
             NodeObject = rootObject,
         };
         SetRootValue(rootValue);
-        _originNodeColor = Root.NodeObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
+        _originNodeColor = Root.NodeObject.GetComponent<SpriteRenderer>().color;
         _treeNodeCount += 1;
         _height += 1;
     }
@@ -16,6 +16,7 @@ public sealed class BinarySearchTree : BinaryTree{
     public override bool Add(Node node) =>addNode(node, Root, 1);
     public override (GameObject, GameObject) Remove(int Value) => removeNode(Value, Root);
     public override Node Find(int Value) => findNode(Value, Root);
+
     public override bool isExist(int Value){
         Node node = Find(Value);
         if (node != null)
@@ -63,8 +64,9 @@ public sealed class BinarySearchTree : BinaryTree{
     }
 
     private void showFindNode(ref Node node){
-        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
-        node.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.yellow);
+        if (_recentFindNode != null) _recentFindNode.NodeObject.
+        GetComponent<SpriteRenderer>().color = _originNodeColor;
+        node.NodeObject.GetComponent<SpriteRenderer>().color = Color.yellow;
         _recentFindNode = node;
     }
 
