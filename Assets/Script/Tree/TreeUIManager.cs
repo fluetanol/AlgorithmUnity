@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TreeUIManager : MonoBehaviour
@@ -38,14 +39,15 @@ public class TreeUIManager : MonoBehaviour
     public void AddNode(){
         if(int.TryParse(inputField.text, out int value)){
             Node node = _nodeManage.NewNode(value);
+            Edge edge = _nodeManage.NewEdge();
             
-            if(_nodeManage.AddNode(node)){
+            if(_nodeManage.AddNode(node , edge)){
                 textField.text = "Success Add Node :" + value;
             }
             else{
                 textField.text = "Fail Add Node :" + value;
-                Destroy(node.NodeObject);
-                Destroy(node.ConnectObject);
+                Destroy(node.gameObject);
+                Destroy(edge.gameObject);
             }
         }
         else textField.text = "Wrong Num";

@@ -13,7 +13,8 @@ public interface ITreeManage
 public interface INodeManage
 {
     public Node NewNode(int value);
-    public bool AddNode(Node node);
+    public Edge NewEdge();
+    public bool AddNode(Node node, Edge edge);
     public (GameObject, GameObject) RemoveNode(int value);
     public bool IsExistNode(int value);
 }

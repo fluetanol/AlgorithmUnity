@@ -5,20 +5,19 @@ using UnityEngine;
 
 public sealed class AVLTree : BinaryTree
 {
-    public AVLTree(GameObject rootObject, int rootValue)
+    public AVLTree(Node rootNode, int rootValue)
     {
         Root = new(){
             Value = rootValue,
-            NodeObject = rootObject,
             Depth = 0,
         };
         SetRootValue(rootValue);
-        _originNodeColor = Root.NodeObject.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
+        _originNodeColor = Root.GetComponent<MeshRenderer>().material.GetColor("_EmissionColor");
         _treeNodeCount += 1;
         _height += 1;
     }
 
-    public override bool Add(Node node) {
+    public override bool Add(Node node, Edge edge) {
         bool isAdd = addNode(node, Root, 1);
         if(isAdd){
             int bf = UpdateDepth(ref Root);
@@ -97,7 +96,7 @@ public sealed class AVLTree : BinaryTree
 
     private void Rotation(Node currentNode, ref  Node currentleft, ref Node currentLeftRight, bool isRR)
     {
-        currentNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", Color.blue);
+        currentNode.GetComponent<SpriteRenderer>().material.SetColor("_EmissionColor", Color.blue);
         PlaceRotationObject(currentNode, ref currentleft, ref currentLeftRight, isRR);
 
         Node node = currentLeftRight;
@@ -134,6 +133,7 @@ public sealed class AVLTree : BinaryTree
 
 
     private void PlaceRotationObject(Node currentNode){
+        /*
         currentNode.left.NodeObject.transform.SetParent(currentNode.NodeObject.transform.parent);
         //currentNode.left.left.NodeObject.transform.SetParent(currentNode.left.NodeObject.transform);
 
@@ -166,11 +166,13 @@ public sealed class AVLTree : BinaryTree
             
         }
         currentNode.left.NodeObject.transform.position = currentPosition;
+        */
     }
 
-
+ 
     private void PlaceRotationObject(Node currentNode, ref Node currentleft, ref Node currentleftright, bool isRR)
     {
+        /*
         currentleft.NodeObject.transform.SetParent(currentNode.NodeObject.transform.parent);
 
         Vector3 currentPosition = currentNode.NodeObject.transform.position;
@@ -208,6 +210,7 @@ public sealed class AVLTree : BinaryTree
 
         }
         currentleft.NodeObject.transform.position = currentPosition;
+            */
     }
 
 
@@ -233,9 +236,9 @@ public sealed class AVLTree : BinaryTree
     protected override void PlaceNodeObject(ref Node node, ref Node currentNode, bool isLeft, float depth)
     {
         base.PlaceNodeObject(ref node, ref currentNode, isLeft, depth);
-        var nodeInfo = node.NodeObject.GetComponent<NodeObjectInfo>();
+        var nodeInfo = node.GetComponent<Node>();
         node.Depth = 0;
-        nodeInfo.DepthText.text = "0";
+        nodeInfo.SetDepthText(0);
     }
 
 
@@ -246,7 +249,7 @@ public sealed class AVLTree : BinaryTree
     }
 
     private int UpdateDepth(ref Node node){
-        var nodeInfo = node.NodeObject.GetComponent<NodeObjectInfo>();
+        var nodeInfo = node.GetComponent<Node>();
 
         Debug.Log(node.Value);
         
@@ -272,7 +275,7 @@ public sealed class AVLTree : BinaryTree
             node.BF = node.left.Depth - node.right.Depth;
         }
         
-        nodeInfo.DepthText.text = node.BF+"";
+        nodeInfo.SetDepthText(node.BF);
         return node.BF;
     }
 

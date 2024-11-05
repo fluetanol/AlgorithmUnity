@@ -13,51 +13,58 @@ public abstract class BinaryTree{
     protected int _treeNodeCount = 0;
     protected int _height = 0;
 
-    public abstract bool Add(Node node);
+    public abstract bool Add(Node node, Edge edge);
     public abstract (GameObject, GameObject) Remove(int Value);
     public abstract Node Find(int Value);
     public abstract bool isExist(int Value);
 
-
     public virtual void ResetRecentNode(){
         if (_recentFindNode != null) 
-        _recentFindNode.NodeObject.GetComponent<SpriteRenderer>().color = _originNodeColor;
+        _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
         _recentFindNode = null;
     }
 
     public virtual void SetRootValue(int value){
         Root.Value = value;
-        Root.NodeObject.GetComponent<NodeObjectInfo>().NodeValueText.text = value.ToString();
+        Root.SetNodeValueText(value);
     }
 
-    //새 노드 추가시 시각적 처리
-    protected virtual void PlaceNodeObject(ref Node node, ref Node currentNode, bool isLeft, float depth) {
+    //새 노드 추가시 시각적 처리            //ParentNode : 추가될 노드의 부모 노드
+    //currentNode : 추가될 노드의 부모 노드
+    //Node : 추가 되는 노드
+    protected virtual void PlaceNodeObject(ref Node node, ref Node parentNode, bool isLeft, float depth) {
         _treeNodeCount += 1;
-        node.Parent = currentNode;
 
-        if (isLeft) currentNode.left = node;
-        else currentNode.right = node;
+        nodeConnect(ref parentNode, ref node, isLeft);
+        node.isLeft = isLeft;
+        var ParentNodeInfo = node.Parent;
+        var NodeInfo = node;
 
-        var ParentNodeInfo = node.Parent.NodeObject.GetComponent<NodeObjectInfo>();
-        var ChildNodeInfo = node.NodeObject.GetComponent<NodeObjectInfo>();
-        var ConnectInfo = node.ConnectObject.GetComponent<NodeConnectObejctInfo>();
-
-        node.ConnectObject.transform.SetParent(node.Parent.NodeObject.transform);
-        node.NodeObject.transform.SetParent(node.Parent.NodeObject.transform);
-
-        if (isLeft) ConnectInfo.transform.eulerAngles = -1 * ConnectInfo.transform.eulerAngles;
-        else ConnectInfo.transform.eulerAngles = ConnectInfo.transform.eulerAngles;
-
-
-        Vector3 a = ConnectInfo.transform.position;
-        Vector3 b = ConnectInfo.StartPoint.position;
-
-        if (isLeft) ConnectInfo.transform.position = ParentNodeInfo.leftNodePoint.position + (a - b);
-        else ConnectInfo.transform.position = ParentNodeInfo.rightNodePoint.position + (a - b);
-
-        ChildNodeInfo.transform.position = ConnectInfo.EndPoint.transform.position;
-        ChildNodeInfo.NodeValueText.text = node.Value.ToString();
+        if(node.Parent.isLeft && node.Parent != Root){
+            node.Parent.SetPositionOffset(-1f);
+            //node.Parent.SetCenterPos();
+        }
+        else if(!node.Parent.isLeft && node.Parent != Root){
+            node.Parent.SetPositionOffset(1f);
+          // node.Parent.SetCenterPos();
+        }
+        NodeInfo.transform.position = new Vector3
+        (ParentNodeInfo.transform.position.x + (isLeft ? -1 : 1),
+        ParentNodeInfo.transform.position.y - 1f, 0);
+        
+        NodeInfo.SetDepthText((int)depth);
+        NodeInfo.SetNodeValueText(node.Value);
     }
+
+
+    private void nodeConnect(ref Node parentNode, ref Node node, bool isLeft){
+        node.Parent = parentNode;
+        if (isLeft) parentNode.left = node;
+        else parentNode.right = node;
+
+        node.transform.parent = parentNode.transform;
+    }
+
 
     public int GetNodeCount() => _treeNodeCount;
     public void PostOrderTraversal() => postOrder(Root);
@@ -179,8 +186,8 @@ public abstract class BinaryTree{
     private void UpdateTraversalNodeVisual(ref Node node)
     {
         TreeUIManager.InstantiateNodeInfo(node.Value);
-        if (_recentFindNode != null) _recentFindNode.NodeObject.GetComponent<SpriteRenderer>().color = _originNodeColor;
-        node.NodeObject.GetComponent<SpriteRenderer>().color = Color.cyan;
+        if (_recentFindNode != null) _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
+        node.GetComponent<SpriteRenderer>().color = Color.cyan;
         _recentFindNode = node;
         treeValue.Add(node.Value);
     }
@@ -189,19 +196,6 @@ public abstract class BinaryTree{
         queue.Clear();
     }
 
-/*
-    private bool checkUpdateTraversalFinish(bool isLevelOrder)
-    {
-        if (isLevelOrder || treeValue.Count == _treeNodeCount)
-        {
-            AlgorithmTreeManager.SetTraversalMode(null);
-            AlgorithmTreeManager.RollBackStartNode();
-            _recentFindNode.NodeObject.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", _originNodeColor);
-            treeValue.Clear();
-            return true;
-        }
-        else return false;
-    }
-*/
+
 
 }

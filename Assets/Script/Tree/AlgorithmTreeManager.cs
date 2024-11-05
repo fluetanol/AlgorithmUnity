@@ -36,7 +36,8 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
         GameObject rootObject = Instantiate(NodePrefab);
         rootObject.transform.position = Vector3.zero;
-        BTree = new BinarySearchTree(rootObject, InitializeValue);
+        Node rootNode = rootObject.GetComponent<Node>();
+        BTree = new BinarySearchTree(ref rootNode, InitializeValue);
         _traversalStartNode = BTree.Root;
 
         
@@ -53,21 +54,21 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         SetTraversalMode(null);
         if (BTree.Root.right != null)
         {
-            Destroy(BTree.Root.right.NodeObject);
-            Destroy(BTree.Root.right.ConnectObject);
+            Destroy(BTree.Root.right.gameObject);
+            //Destroy(BTree.Root.right.ConnectObject);
         }
         if (BTree.Root.left != null)
         {
-            Destroy(BTree.Root.left.NodeObject);
-            Destroy(BTree.Root.left.ConnectObject);
+            Destroy(BTree.Root.left.gameObject);
+            //Destroy(BTree.Root.left.ConnectObject);
         }
         BTree.Root.right = null;
         BTree.Root.left = null;
 
         Node node = BTree.Root;
 
-        if (num == 0) BTree = new BinarySearchTree(node.NodeObject, 0);
-        else if (num == 1) BTree = new AVLTree(node.NodeObject, 0);
+        if (num == 0) BTree = new BinarySearchTree(ref node, 0);
+        else if (num == 1) BTree = new AVLTree(node, 0);
 
         RollBackStartNode();
     }
@@ -75,17 +76,23 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
     public Node NewNode(int value){
         GameObject NodeObject = Instantiate(_nodePrefab);
-        GameObject ConnectObject = Instantiate(_connectPrefab);
-        Node node = new Node()
-        {
-            Value = value,
-            NodeObject = NodeObject,
-            ConnectObject = ConnectObject
-        };
+
+        Node node = NodeObject.GetComponent<Node>();
+
+        node.Value = value;
+        node.Depth = 0;
+        node.SetNodeValueText(value);
+
         return node;
     }
 
-    public bool AddNode(Node node)                        => BTree.Add(node);
+    public Edge NewEdge(){
+        GameObject ConnectObject = Instantiate(_connectPrefab);
+        Edge edge = ConnectObject.GetComponent<Edge>();
+        return edge;
+    }
+
+    public bool AddNode(Node node, Edge edge)             => BTree.Add(node, edge);
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
     public bool IsExistNode(int value)                    => BTree.isExist(value);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();
