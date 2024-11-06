@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -17,29 +20,32 @@ public class Node: MonoBehaviour
 
     [Header("Text")]
     public TMP_Text NodeValueText;
-    public TMP_Text DepthText;
 
+    public Vector3 position;
 
-
-    public void SetPositionOffset(float x) {
-        transform.position = new Vector2(transform.position.x + x, transform.position.y);
-        
-    }
 
 
     public void SetCenterPos(){
-        if(right == null && left == null) return;
+        if(right == null || left == null) return;
         transform.position = new Vector2(
           (right.transform.position.x + left.transform.position.x) / 2,
           transform.position.y);
     }
 
-    public void SetDepthText(int depth){
-        DepthText.text = depth.ToString();
+    public void SetNodeValue(int value){
+        Value = value;  
+        NodeValueText.text = value.ToString();
     }
 
-    public void SetNodeValueText(int value){
-        NodeValueText.text = value.ToString();
+    public IEnumerator PositionMove(Vector3 targetPos, float seconds){
+        Vector3 currentPos = transform.position;
+        float elapsedTime = 0;
+        while (elapsedTime < seconds){
+            transform.position = Vector3.Lerp(currentPos, targetPos, (elapsedTime / seconds));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = targetPos;
     }
 
 }

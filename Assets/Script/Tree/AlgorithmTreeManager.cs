@@ -76,13 +76,9 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
     public Node NewNode(int value){
         GameObject NodeObject = Instantiate(_nodePrefab);
-
         Node node = NodeObject.GetComponent<Node>();
-
-        node.Value = value;
         node.Depth = 0;
-        node.SetNodeValueText(value);
-
+        node.SetNodeValue(value);
         return node;
     }
 
@@ -92,7 +88,11 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         return edge;
     }
 
-    public bool AddNode(Node node, Edge edge)             => BTree.Add(node, edge);
+    public bool AddNode(Node node, Edge edge){
+        bool k = BTree.Add(node, edge);
+        if(k) StartCoroutine(BTree.nodeMoveAnimation(0.5f));
+        return k;
+    }
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
     public bool IsExistNode(int value)                    => BTree.isExist(value);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();

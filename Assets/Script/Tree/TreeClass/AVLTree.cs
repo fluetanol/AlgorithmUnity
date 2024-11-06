@@ -238,7 +238,6 @@ public sealed class AVLTree : BinaryTree
         base.PlaceNodeObject(ref node, ref currentNode, isLeft, depth);
         var nodeInfo = node.GetComponent<Node>();
         node.Depth = 0;
-        nodeInfo.SetDepthText(0);
     }
 
 
@@ -274,8 +273,7 @@ public sealed class AVLTree : BinaryTree
             node.Depth = node.right. Depth+1;
             node.BF = node.left.Depth - node.right.Depth;
         }
-        
-        nodeInfo.SetDepthText(node.BF);
+    
         return node.BF;
     }
 

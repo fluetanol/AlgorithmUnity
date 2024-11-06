@@ -29,7 +29,7 @@ public sealed class BinarySearchTree : BinaryTree{
         bool isFind = true;
         if(depth>_height) {
             _height = depth;
-            Camera.main.orthographicSize += 0.5f;
+            //Camera.main.orthographicSize += 0.5f;
         }
 
         if(node.Value < currentNode.Value){
@@ -120,7 +120,7 @@ public sealed class BinarySearchTree : BinaryTree{
                 (removeObject, removeConnectObject) = removeNode(smallestNode.Value, smallestNode);
                 _treeNodeCount += 1;
                 findnode.Value = smallestNode.Value;
-                findnode.GetComponent<Node>().SetNodeValueText(findnode.Value);
+                findnode.GetComponent<Node>().SetNodeValue(findnode.Value);
             break;
         }
         _treeNodeCount-=1;

@@ -18,6 +18,9 @@ public abstract class BinaryTree{
     public abstract Node Find(int Value);
     public abstract bool isExist(int Value);
 
+    private List<(Node, Vector3)> _nodePosList = new();   
+
+
     public virtual void ResetRecentNode(){
         if (_recentFindNode != null) 
         _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
@@ -26,7 +29,7 @@ public abstract class BinaryTree{
 
     public virtual void SetRootValue(int value){
         Root.Value = value;
-        Root.SetNodeValueText(value);
+        Root.SetNodeValue(value);
     }
 
     //새 노드 추가시 시각적 처리            //ParentNode : 추가될 노드의 부모 노드
@@ -37,23 +40,21 @@ public abstract class BinaryTree{
 
         nodeConnect(ref parentNode, ref node, isLeft);
         node.isLeft = isLeft;
-        var ParentNodeInfo = node.Parent;
-        var NodeInfo = node;
+        nodeWidthControl(ref node, isLeft);
 
-        if(node.Parent.isLeft && node.Parent != Root){
-            node.Parent.SetPositionOffset(-1f);
-            //node.Parent.SetCenterPos();
+        node.transform.position = new Vector3
+        (parentNode.transform.position.x + (isLeft ? -1 : 1),
+        parentNode.transform.position.y - 1f, 0.5f);
+
+        node.SetNodeValue(node.Value);
+    }
+
+    public IEnumerator nodeMoveAnimation(float seconds){
+        foreach(var (node, dir) in _nodePosList){
+            Vector3 targetPos = node.transform.position - dir;
+            yield return node.PositionMove(targetPos, seconds);
         }
-        else if(!node.Parent.isLeft && node.Parent != Root){
-            node.Parent.SetPositionOffset(1f);
-          // node.Parent.SetCenterPos();
-        }
-        NodeInfo.transform.position = new Vector3
-        (ParentNodeInfo.transform.position.x + (isLeft ? -1 : 1),
-        ParentNodeInfo.transform.position.y - 1f, 0);
-        
-        NodeInfo.SetDepthText((int)depth);
-        NodeInfo.SetNodeValueText(node.Value);
+        _nodePosList.Clear();
     }
 
 
@@ -61,10 +62,24 @@ public abstract class BinaryTree{
         node.Parent = parentNode;
         if (isLeft) parentNode.left = node;
         else parentNode.right = node;
-
         node.transform.parent = parentNode.transform;
     }
 
+
+    private void nodeWidthControl(ref Node node, bool isLeft){
+        if (node == Root){
+            return;
+        }
+        else if (node.isLeft == isLeft){
+            nodeWidthControl(ref node.Parent, isLeft);
+        }
+        else if(node.isLeft != isLeft){
+            float offset = isLeft ? -1 : 1;
+            Vector3 dir = Vector3.right * offset;
+            _nodePosList.Add((node,dir));
+            nodeWidthControl(ref node.Parent, node.isLeft);
+        }
+    }
 
     public int GetNodeCount() => _treeNodeCount;
     public void PostOrderTraversal() => postOrder(Root);
@@ -73,8 +88,7 @@ public abstract class BinaryTree{
     public void LevelorderTraversal() => levelOrder(Root);
 
 
-    public IEnumerator CoroutineInorderTraversal(Node node, float seconds)
-    {
+    public IEnumerator CoroutineInorderTraversal(Node node, float seconds){
         if (node == null){
             yield break;
         }
