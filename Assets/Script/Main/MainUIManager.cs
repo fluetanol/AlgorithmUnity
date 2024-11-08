@@ -7,8 +7,8 @@ public class MainUIManager : MonoBehaviour
 {
     public Scene scene;
     public void OnMoveScene(int SceneNum){
-        if(SceneNum == -1) SceneManager.LoadScene("Main");
-        else if(SceneNum == 0) SceneManager.LoadScene("SortScene");
-        else if(SceneNum == 1) SceneManager.LoadScene("TreeScene");
+        if(SceneNum == -1) SceneManager.LoadSceneAsync("Main");
+        else if(SceneNum == 0) SceneManager.LoadSceneAsync("SortScene");
+        else if(SceneNum == 1) SceneManager.LoadSceneAsync("TreeScene");
     }
 }

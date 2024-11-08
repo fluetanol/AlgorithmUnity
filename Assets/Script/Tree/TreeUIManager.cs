@@ -68,6 +68,7 @@ public class TreeUIManager : MonoBehaviour
         if (int.TryParse(inputField.text, out int value))
         {
             (GameObject, GameObject) RemoveObject = _nodeManage.RemoveNode(value);
+            
             if (RemoveObject.Item1 == null) textField.text = "NotFound";
             else {
                 Destroy(RemoveObject.Item1);

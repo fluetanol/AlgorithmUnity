@@ -34,9 +34,8 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         NodePrefab = _nodePrefab;
         ConnectPrefab = _connectPrefab;
 
-        GameObject rootObject = Instantiate(NodePrefab);
-        rootObject.transform.position = Vector3.zero;
-        Node rootNode = rootObject.GetComponent<Node>();
+        Node rootNode = ObjectPool.GetPoolObject<Node>(ObjectPoolType.Node);
+        rootNode.transform.position = Vector3.zero;
         BTree = new BinarySearchTree(ref rootNode, InitializeValue);
         _traversalStartNode = BTree.Root;
 
@@ -75,16 +74,14 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
 
     public Node NewNode(int value){
-        GameObject NodeObject = Instantiate(_nodePrefab);
-        Node node = NodeObject.GetComponent<Node>();
+        Node node = ObjectPool.GetPoolObject<Node>(ObjectPoolType.Node);
         node.Depth = 0;
         node.SetNodeValue(value);
         return node;
     }
 
     public Edge NewEdge(){
-        GameObject ConnectObject = Instantiate(_connectPrefab);
-        Edge edge = ConnectObject.GetComponent<Edge>();
+        Edge edge = ObjectPool.GetPoolObject<Edge>(ObjectPoolType.Edge);
         return edge;
     }
 
@@ -136,6 +133,10 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         ResetRecentNode();
         RollBackStartNode();
         BTree.LevelOrderQueueReset();
+    }
+
+    public void Test(){
+        Debug.Log("Test");
     }
 }
     

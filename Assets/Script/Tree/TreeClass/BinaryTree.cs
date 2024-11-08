@@ -14,12 +14,19 @@ public abstract class BinaryTree{
     protected int _height = 0;
 
     public abstract bool Add(Node node, Edge edge);
+
+    /// <summary>
+    /// 찾은 값에 기반하여 삭제될 노드와 엣지 쌍을 반환
+    /// </summary>
+    /// <param name="Value"></param>
+    /// <returns>(삭제된 노드, 삭제된 엣지) </returns>
     public abstract (GameObject, GameObject) Remove(int Value);
+
+
     public abstract Node Find(int Value);
     public abstract bool isExist(int Value);
 
     private List<(Node, Vector3)> _nodePosList = new();   
-
 
     public virtual void ResetRecentNode(){
         if (_recentFindNode != null) 
