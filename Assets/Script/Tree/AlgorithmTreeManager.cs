@@ -53,12 +53,15 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         SetTraversalMode(null);
         if (BTree.Root.right != null)
         {
-            Destroy(BTree.Root.right.gameObject);
+            ObjectPool.DestoyPoolObject(BTree.Root.right.gameObject, ObjectPoolType.Node);
+            //Destroy(BTree.Root.right.gameObject);
             //Destroy(BTree.Root.right.ConnectObject);
         }
         if (BTree.Root.left != null)
         {
-            Destroy(BTree.Root.left.gameObject);
+            ObjectPool.DestoyPoolObject(BTree.Root.left.gameObject, ObjectPoolType.Node);
+
+            //Destroy(BTree.Root.left.gameObject);
             //Destroy(BTree.Root.left.ConnectObject);
         }
         BTree.Root.right = null;
@@ -87,7 +90,7 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
 
     public bool AddNode(Node node, Edge edge){
         bool k = BTree.Add(node, edge);
-        if(k) StartCoroutine(BTree.nodeMoveAnimation(0.5f));
+        if(k) BTree.NodeMoveAnimation(node, 0.5f);
         return k;
     }
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);

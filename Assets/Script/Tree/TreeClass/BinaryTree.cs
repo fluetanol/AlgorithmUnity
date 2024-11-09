@@ -1,6 +1,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 
@@ -56,11 +57,16 @@ public abstract class BinaryTree{
         node.SetNodeValue(node.Value);
     }
 
-    public IEnumerator nodeMoveAnimation(float seconds){
+    public void NodeMoveAnimation(Node focusNode, float seconds){
+        Sequence sequence = DOTween.Sequence();
         foreach(var (node, dir) in _nodePosList){
             Vector3 targetPos = node.transform.position - dir;
-            yield return node.PositionMove(targetPos, seconds);
+            node.PositionMove(ref sequence, targetPos, seconds);
         }
+        Vector3 focusNodePos = focusNode.transform.position;
+        focusNodePos.z = Camera.main.transform.position.z;
+        sequence.Append(Camera.main.DOCameraMove(focusNodePos , seconds));
+        
         _nodePosList.Clear();
     }
 

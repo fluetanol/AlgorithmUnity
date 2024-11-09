@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -21,33 +22,27 @@ public class Node: MonoBehaviour
     [Header("Text")]
     public TMP_Text NodeValueText;
 
-    public Vector3 position;
-
-
-
-    public void SetCenterPos(){
-        if(right == null || left == null) return;
-        transform.position = new Vector2(
-          (right.transform.position.x + left.transform.position.x) / 2,
-          transform.position.y);
-    }
 
     public void SetNodeValue(int value){
         Value = value;  
         NodeValueText.text = value.ToString();
     }
 
-    public IEnumerator PositionMove(Vector3 targetPos, float seconds){
-        Vector3 currentPos = transform.position;
-        float elapsedTime = 0;
-        while (elapsedTime < seconds){
-            transform.position = Vector3.Lerp(currentPos, targetPos, (elapsedTime / seconds));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = targetPos;
+    public void SetCenterPos(){
+        if (right == null || left == null) return;
+        Vector3 position = new Vector2((right.transform.position.x + left.transform.position.x) / 2, transform.position.y);
+        transform.DOMove(position, 0.5f);
     }
 
+    public void PositionMove(ref Sequence sequence, Vector3 targetPos, float seconds){
+        sequence.Append(transform.DOMove(targetPos,seconds).SetEase(Ease.InOutQuad) );
+    }
+
+    public void OnNodePress(float deltaTime){
+        Vector3 position = this.transform.position;
+        position.z = Camera.main.transform.position.z;
+        Camera.main.DOCameraMove(position, deltaTime);
+    }
 }
 
 
