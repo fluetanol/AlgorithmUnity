@@ -11,4 +11,5 @@ public class MainUIManager : MonoBehaviour
         else if(SceneNum == 0) SceneManager.LoadSceneAsync("SortScene");
         else if(SceneNum == 1) SceneManager.LoadSceneAsync("TreeScene");
     }
+    
 }

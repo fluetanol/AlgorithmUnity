@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class Node: MonoBehaviour
@@ -22,6 +20,9 @@ public class Node: MonoBehaviour
     [Header("Text")]
     public TMP_Text NodeValueText;
 
+    [Header("Coponent")]
+    public Button button;
+    public Image image;
 
     public void SetNodeValue(int value){
         Value = value;  
@@ -42,12 +43,9 @@ public class Node: MonoBehaviour
         Vector3 position = this.transform.position;
         position.z = Camera.main.transform.position.z;
         Camera.main.DOCameraMove(position, deltaTime);
+        TreeUIManager.ShowNodeInfoUI(0.3f, deltaTime);
     }
-}
 
-
-
-public class AVLNode : Node{
 
 }
 

@@ -45,9 +45,6 @@ public class ObjectPool : MonoBehaviour
 
         s_edgePoolQueue = new Queue<Transform>(_edgePoolData._poolQueue);
         s_edgePrefab = _edgePoolData.prefab;
-
-        //_nodePoolData._poolQueue.Clear();
-        //_edgePoolData._poolQueue.Clear();
     }
 
     public static T GetPoolObject<T>(ObjectPoolType type) where T : Component{
@@ -67,6 +64,7 @@ public class ObjectPool : MonoBehaviour
     public static void DestoyPoolObject(GameObject obj, ObjectPoolType type){
         var (q, _) = minifactory(type);
         q.Enqueue(obj.transform);
+       // obj.transform.parent = null;
         obj.SetActive(false);
     }
 

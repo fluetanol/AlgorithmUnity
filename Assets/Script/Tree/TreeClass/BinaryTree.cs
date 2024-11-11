@@ -25,7 +25,7 @@ public abstract class BinaryTree{
 
 
     public abstract Node Find(int Value);
-    public abstract bool isExist(int Value);
+    public abstract bool isExist(int Value, out Node node);
 
     private List<(Node, Vector3)> _nodePosList = new();   
 

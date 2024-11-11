@@ -16,7 +16,7 @@ public interface INodeManage
     public Edge NewEdge();
     public bool AddNode(Node node, Edge edge);
     public (GameObject, GameObject) RemoveNode(int value);
-    public bool IsExistNode(int value);
+    public bool IsExistNode(int value, out Node node);
 }
 
 public interface ITreeTraversal

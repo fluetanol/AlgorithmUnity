@@ -39,14 +39,13 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         BTree = new BinarySearchTree(ref rootNode, InitializeValue);
         _traversalStartNode = BTree.Root;
 
-        
         enumerateTraversal = BTree.CoroutineInorderTraversal(_traversalStartNode, _perSec);
     }
 
-    public static void RollBackStartNode()                                   => _traversalStartNode = BTree.Root;
 
-    public void ResetRecentNode() => BTree.ResetRecentNode();
-    public void SetRootValue(int value) => BTree.SetRootValue(value);
+    public static void RollBackStartNode()          => _traversalStartNode = BTree.Root;
+    public void ResetRecentNode()                   => BTree.ResetRecentNode();
+    public void SetRootValue(int value)             => BTree.SetRootValue(value);
 
     public void SetNewTree(int num)
     {
@@ -60,7 +59,6 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         if (BTree.Root.left != null)
         {
             ObjectPool.DestoyPoolObject(BTree.Root.left.gameObject, ObjectPoolType.Node);
-
             //Destroy(BTree.Root.left.gameObject);
             //Destroy(BTree.Root.left.ConnectObject);
         }
@@ -94,7 +92,7 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         return k;
     }
     public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
-    public bool IsExistNode(int value)                    => BTree.isExist(value);
+    public bool IsExistNode(int value, out Node node)     => BTree.isExist(value, out node);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();
 
 

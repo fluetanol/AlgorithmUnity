@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public sealed class BinarySearchTree : BinaryTree{
@@ -6,7 +8,7 @@ public sealed class BinarySearchTree : BinaryTree{
         Root = rootNode;
         rootNode.Value = rootValue;
         SetRootValue(rootValue);
-        _originNodeColor = Root.GetComponent<SpriteRenderer>().color;
+        _originNodeColor = Root.GetComponentInChildren<Image>().color;
         _treeNodeCount += 1;
         _height += 1;
     }
@@ -15,14 +17,18 @@ public sealed class BinarySearchTree : BinaryTree{
     public override (GameObject, GameObject) Remove(int Value) => removeNode(Value, Root);
     public override Node Find(int Value) => findNode(Value, Root);
 
-    public override bool isExist(int Value){
-        Node node = Find(Value);
-        if (node != null)
+    public override bool isExist(int Value, out Node node){
+        Node findNode = Find(Value);
+        if (findNode != null)
         {
-            showFindNode(ref node);
+            showFindNode(ref findNode);
+            node = findNode;
             return true;
         }
-        else return false;
+        else {
+            node = null;
+            return false;
+        }
     }
 
     private bool addNode(Node node, Edge edge, Node currentNode, int depth){
@@ -69,8 +75,12 @@ public sealed class BinarySearchTree : BinaryTree{
     }
 
     private void showFindNode(ref Node node){
-        if (_recentFindNode != null) _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
-        node.GetComponent<SpriteRenderer>().color = Color.yellow;
+        if (_recentFindNode != null) {
+            _recentFindNode.image.color = _originNodeColor;
+            //EventSystem.current.SetSelectedGameObject(null);
+        }
+        node.image.color = node.button.colors.selectedColor;
+        node.button.Select();
         _recentFindNode = node;
     }
 

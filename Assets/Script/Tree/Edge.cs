@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Edge : MonoBehaviour
 {
-    private LineRenderer _lineRenderer;
-    public Transform Node1;
-    public Transform Node2;
+    private     LineRenderer    _lineRenderer;
+    public      Transform       Node1;
+    public      Transform       Node2;
 
     private void Awake()
     {
@@ -19,6 +19,8 @@ public class Edge : MonoBehaviour
         {
             _lineRenderer.SetPosition(0, Node1.position);
             _lineRenderer.SetPosition(1, Node2.position);
+        }else{
+            ObjectPool.DestoyPoolObject(this.gameObject, ObjectPoolType.Edge);
         }
     }
 

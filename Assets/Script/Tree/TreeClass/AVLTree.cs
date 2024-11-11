@@ -213,17 +213,12 @@ public sealed class AVLTree : BinaryTree
             */
     }
 
-
-
-
-
-
     public override Node Find(int Value)
     {
         throw new System.NotImplementedException();
     }
 
-    public override bool isExist(int Value)
+    public override bool isExist(int Value, out Node node)
     {
         throw new System.NotImplementedException();
     }
