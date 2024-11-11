@@ -36,13 +36,14 @@ public class Node: MonoBehaviour
     }
 
     public void PositionMove(ref Sequence sequence, Vector3 targetPos, float seconds){
-        sequence.Append(transform.DOMove(targetPos,seconds).SetEase(Ease.InOutQuad) );
+        sequence.Append(transform.DOMove(targetPos,seconds).SetEase(Ease.InOutQuad));
     }
 
     public void OnNodePress(float deltaTime){
         Vector3 position = this.transform.position;
         position.z = Camera.main.transform.position.z;
         Camera.main.DOCameraMove(position, deltaTime);
+        Camera.main.DOCameraZoom(2.5f, deltaTime);
         TreeUIManager.ShowNodeInfoUI(0.3f, deltaTime);
     }
 

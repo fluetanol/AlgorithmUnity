@@ -62,8 +62,9 @@ public class TreeUIManager : MonoBehaviour
         if (int.TryParse(inputField.text, out int value)){
             if(_nodeManage.IsExistNode(value, out Node node)){
                 textField.text = "Find!";
-                ShowNodeInfoUI(0.3f, 0.5f);
-                node.OnNodePress(0.5f);
+                Vector3 pos = node.transform.position;
+                pos.z = -10;
+                Camera.main.DOCameraMove(pos, 0.5f);
             }
             else textField.text = "NotFound";
         }

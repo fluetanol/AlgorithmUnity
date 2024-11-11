@@ -31,7 +31,7 @@ public abstract class BinaryTree{
 
     public virtual void ResetRecentNode(){
         if (_recentFindNode != null) 
-        _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
+        _recentFindNode.image.color = _originNodeColor;
         _recentFindNode = null;
     }
 
@@ -213,8 +213,8 @@ public abstract class BinaryTree{
     private void UpdateTraversalNodeVisual(ref Node node)
     {
         TreeUIManager.InstantiateNodeInfo(node.Value);
-        if (_recentFindNode != null) _recentFindNode.GetComponent<SpriteRenderer>().color = _originNodeColor;
-        node.GetComponent<SpriteRenderer>().color = Color.cyan;
+        if (_recentFindNode != null) _recentFindNode.image.color = _originNodeColor;
+        node.image.color = Color.cyan;
         _recentFindNode = node;
         treeValue.Add(node.Value);
     }
