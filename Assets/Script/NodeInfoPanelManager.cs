@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
 public class NodeInfoPanelManager : MonoBehaviour, IPointerDownHandler
 {
     public static NodeInfoPanelManager current;
