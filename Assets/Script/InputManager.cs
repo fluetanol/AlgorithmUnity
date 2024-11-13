@@ -14,7 +14,7 @@ public class InputManager : MonoBehaviour
             TreeUIManager.CloseNodeInfoUI(0.5f);
         }
 
-        
+        print(Input.mouseScrollDelta);
         
     }
 }
