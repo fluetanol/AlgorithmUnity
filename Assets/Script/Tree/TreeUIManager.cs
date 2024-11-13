@@ -10,18 +10,21 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] private GameObject         _nodeInfoPrefab;
     [SerializeField] private Transform          _nodeInfoParent;
     [SerializeField] private Transform          _traversalOption;
-    [SerializeField] private RectTransform         _nodeInfoUI;
+    [SerializeField] private RectTransform      _nodeInfoUI;
 
     private static           GameObject         _staticNodeInfoPrefab;
     private static           Transform          _staticNodeInfoParent;
-    private static           RectTransform          _staticNodeInfoUI;
+    private static           RectTransform      _staticNodeInfoUI;
+    private static           bool               _isShowNodeInfoClose = true;
     
     private                 ITreeTraversal       _treeTraversal;
     private                 ITreeManage          _treeManage;
     private                 INodeManage          _nodeManage;
-    private                 int                 _traversalOptionNum = 0;
 
+    private                 int                 _traversalOptionNum = 0;
     private                 TraversalMode        _currentMode = TraversalMode.PreOrder;
+
+
 
     private void Awake(){
         AlgorithmTreeManager treeManager = FindObjectOfType<AlgorithmTreeManager>();
@@ -118,28 +121,37 @@ public class TreeUIManager : MonoBehaviour
     }
 
     //시각적 처리 초기화
-    private void TraversalReset()
-    {
+    private void TraversalReset(){
         for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--)
             Destroy(_nodeInfoParent.GetChild(k).gameObject);
         _treeManage.ResetRecentNode();
     }
 
+    public static void FocusNode(Vector3 NodePosition, float deltaTime)
+    {
+        Camera.main.DOCameraMove(NodePosition, deltaTime);
+        Camera.main.DOCameraZoom(2.5f, deltaTime);
+    }
+
     public static void CloseNodeInfoUI(float deltaTime){
+        if(_isShowNodeInfoClose) return;
+        _isShowNodeInfoClose = true;
+        Camera.main.DOCameraZoom(4, 0.5f);
         _staticNodeInfoUI.DOAnchorPosX(0, deltaTime).SetEase(Ease.InOutQuad).onComplete
                  += () => _staticNodeInfoUI.gameObject.SetActive(false);
     }
 
     public static void ShowNodeInfoUI(float widthRatio, float deltaTime){
+        if(!_isShowNodeInfoClose) return;
+        _isShowNodeInfoClose = false;
+        
         float moveX = Screen.width * widthRatio;
         _staticNodeInfoUI.sizeDelta = new Vector2(moveX, _staticNodeInfoUI.sizeDelta.y);
-        if (!_staticNodeInfoUI.gameObject.activeSelf)
-        {
-            _staticNodeInfoUI.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad).OnStart(() =>
-            _staticNodeInfoUI.gameObject.SetActive(true));
+        if (!_staticNodeInfoUI.gameObject.activeSelf){
+            _staticNodeInfoUI.gameObject.SetActive(true);
+            _staticNodeInfoUI.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad);
         }
     }
-
 
     public static void InstantiateNodeInfo(int value){
         GameObject g = Instantiate(_staticNodeInfoPrefab, _staticNodeInfoParent);
@@ -147,3 +159,4 @@ public class TreeUIManager : MonoBehaviour
     }
 
 }
+

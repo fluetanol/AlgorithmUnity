@@ -45,7 +45,6 @@ public abstract class BinaryTree{
     //Node : 추가 되는 노드
     protected virtual void PlaceNodeObject(ref Node node, ref Node parentNode, bool isLeft, float depth) {
         _treeNodeCount += 1;
-
         nodeConnect(ref parentNode, ref node, isLeft);
         node.isLeft = isLeft;
         nodeWidthControl(ref node, isLeft);
@@ -57,16 +56,21 @@ public abstract class BinaryTree{
         node.SetNodeValue(node.Value);
     }
 
+    //노드 이동 관련 애니메이션으로, DOTween과 TreeUIManager등의 static함수들과의 의존성이 상당히 높은 구역입니다.
     public void NodeMoveAnimation(Node focusNode, float seconds){
+        TreeUIManager.CloseNodeInfoUI(0.5f);
+        Camera.main.DOOrthoSize(4, seconds);
         Sequence sequence = DOTween.Sequence();
+
         foreach(var (node, dir) in _nodePosList){
             Vector3 targetPos = node.transform.position - dir;
             node.PositionMove(ref sequence, targetPos, seconds);
         }
+
         Vector3 focusNodePos = focusNode.transform.position;
         focusNodePos.z = Camera.main.transform.position.z;
-        sequence.Append(Camera.main.DOCameraMove(focusNodePos , seconds));
-        
+        Camera.main.DOCameraMove(focusNodePos, seconds);
+
         _nodePosList.Clear();
     }
 
@@ -132,13 +136,11 @@ public abstract class BinaryTree{
             yield return new WaitForSeconds(seconds);
         }
         
-
         IEnumerator rightenumerator = CoroutinePostorderTraversal(node.right, seconds); 
         while(rightenumerator.MoveNext()){
             yield return new WaitForSeconds(seconds);
         }
            
-
         UpdateTraversalNodeVisual(ref node);
         yield return new WaitForSeconds(seconds);
     }

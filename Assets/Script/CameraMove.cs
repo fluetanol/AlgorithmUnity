@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class CameraMoveExtension{
@@ -7,6 +8,7 @@ public static class CameraMoveExtension{
     }
 
     public static Tween DOCameraZoom(this Camera camera, float targetSize, float seconds, Ease ease = Ease.InOutQuad){
+        if(camera.orthographicSize == targetSize) return null;
         return camera.DOOrthoSize(targetSize, seconds).SetEase(ease);   
     }
 }

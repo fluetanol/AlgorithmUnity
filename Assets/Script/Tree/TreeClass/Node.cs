@@ -42,12 +42,10 @@ public class Node: MonoBehaviour
     public void OnNodePress(float deltaTime){
         Vector3 position = this.transform.position;
         position.z = Camera.main.transform.position.z;
-        Camera.main.DOCameraMove(position, deltaTime);
-        Camera.main.DOCameraZoom(2.5f, deltaTime);
+        TreeUIManager.FocusNode(position, deltaTime);
         TreeUIManager.ShowNodeInfoUI(0.3f, deltaTime);
+        NodeInfoPanelManager.current.SetNodeInfo(Value, Depth, BF);
     }
-
-
 }
 
 
