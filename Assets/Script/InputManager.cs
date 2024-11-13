@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    // Update is called once per frame
+    InputAction inputAction;
+
+    void Start(){
+
+    }
+
     void Update()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
@@ -14,7 +19,9 @@ public class InputManager : MonoBehaviour
             TreeUIManager.CloseNodeInfoUI(0.5f);
         }
 
-        print(Input.mouseScrollDelta);
         
     }
+
+
+
 }
