@@ -10,7 +10,7 @@ public abstract class BinaryTree{
     protected Node _recentFindNode = null;
     protected Color _originNodeColor;
     protected Queue<Node> queue = new();
-    protected HashSet<int> treeValue = new();
+    protected HashSet<Node> treeNodeSet = new();
     protected int _treeNodeCount = 0;
     protected int _height = 0;
 
@@ -219,13 +219,10 @@ public abstract class BinaryTree{
         if (_recentFindNode != null) _recentFindNode.image.color = _originNodeColor;
         node.image.color = Color.cyan;
         _recentFindNode = node;
-        treeValue.Add(node.Value);
     }
 
     public void LevelOrderQueueReset(){
         queue.Clear();
     }
-
-
 
 }

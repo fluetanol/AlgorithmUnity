@@ -2,9 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class NodeInfoPanelManager : PanelBlocking
+public class NodeInfoPanel : PanelBlocking
 {
-    public static NodeInfoPanelManager current;
+    public static NodeInfoPanel current;
     [SerializeField] private TMP_Text rootleef;
     [SerializeField] private TMP_Text value;
     [SerializeField] private TMP_Text level;

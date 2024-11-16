@@ -56,8 +56,6 @@ public class InputManager : MonoBehaviour
         }
     }
 
-
-
     private void CloseFloatingUI(){
         if (EventSystem.current.currentSelectedGameObject == null){
             TreeUIManager.current.CloseNodeInfoUI(0.5f);

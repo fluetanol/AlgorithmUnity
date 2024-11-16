@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
@@ -10,16 +11,16 @@ public class TreeUIManager : MonoBehaviour
     public static TreeUIManager current{get; private set;}
 
     [Header("UIElement")]
-    [SerializeField] private TMP_InputField     inputField;
-    [SerializeField] private TMP_Text           textField;
+    [SerializeField] private TMP_Text           _textField;
     [SerializeField] private Button             _addNodeButton;
     [SerializeField] private GameObject         _nodeInfoPrefab;
     [SerializeField] private Transform          _nodeInfoParent;
     [SerializeField] private Transform          _traversalOption;
 
     [Header("Panel")]
-    [SerializeField] private RectTransform      _nodeInfoUI;
-    [SerializeField] private RectTransform      _addPanel;
+    [SerializeField] private RectTransform      _nodeInfoPanel;
+    [SerializeField] private AddPanel           _addPanel;
+    [SerializeField] private FindRemovePanel    _findRemovePanel;
 
     //static managed;
     private static           GameObject         _staticNodeInfoPrefab;
@@ -53,58 +54,51 @@ public class TreeUIManager : MonoBehaviour
         _staticNodeInfoParent = _nodeInfoParent;
         //_addNodeButton.onClick.AddListener(delegate{ShowAddPanelUI(0.1f, 0.5f);});
         _addNodeButton.onClick.AddListener(() => ShowAddPanelUI(0.5f));
+        _addPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
+        _addPanel.addButton.onClick.AddListener(() => AddNode(int.Parse(_addPanel.NodeUI.NodeValueText.text)));
+        _findRemovePanel._InputField.onValueChanged.AddListener((s) => OnFindValueChanged(s));
     }
 
     public void SetNewTree(int num){
         _treeManage.SetNewTree(num);
     }
 
-    public void AddNode(){
-        if(int.TryParse(inputField.text, out int value)){
-            Node node = _nodeManage.NewNode(value);
-            Edge edge = _nodeManage.NewEdge();
-            
-            if(_nodeManage.AddNode(node , edge)){
-                textField.text = "Success Add Node :" + value;
-            }
-            else{
-                textField.text = "Fail Add Node :" + value;
-                Destroy(node.gameObject);
-                Destroy(edge.gameObject);
-            }
+    public void AddNode(int value){
+        EventSystem.current.SetSelectedGameObject(null);
+        Node node = _nodeManage.NewNode(value);
+        Edge edge = _nodeManage.NewEdge();
+        if(_nodeManage.AddNode(node , edge)){
+            _textField.text = "Success Add Node :" + value;
         }
-        else textField.text = "Wrong Num";
-
-    }
-
-    public void FindNode(){
-        if (int.TryParse(inputField.text, out int value)){
-            if(_nodeManage.IsExistNode(value, out Node node)){
-                textField.text = "Find!";
-                Vector3 pos = node.transform.position;
-                pos.z = -10;
-                Camera.main.DOCameraMove(pos, 0.5f);
-            }
-            else textField.text = "NotFound";
-        }
-        else textField.text = "Wrong Num";
-    }
-
-    public void RemoveNode(){
-        if (int.TryParse(inputField.text, out int value)){
-            (GameObject, GameObject) RemoveObject = _nodeManage.RemoveNode(value);
-            
-            if (RemoveObject.Item1 == null) textField.text = "NotFound";
-            else {
-                Destroy(RemoveObject.Item1);
-                Destroy(RemoveObject.Item2);
-                textField.text = "Remove!";
-            }
+        else{
+            _textField.text = "Fail Add Node :" + value;
+            Destroy(node.gameObject);
+            Destroy(edge.gameObject);
         }
     }
 
-    public void SetRootNodeValue(){
-        if (int.TryParse(inputField.text, out int value) && _treeManage.GetTreeNodeCount() == 1){
+    public void FindNode(int value){
+        if(_nodeManage.IsExistNode(value, out Node node)){
+            _textField.text = "Find!";
+            Vector3 pos = node.transform.position;
+            pos.z = -10;
+            Camera.main.DOCameraMove(pos, 0.5f);
+        }
+        else _textField.text = "NotFound";
+    }
+
+    public void RemoveNode(int value){
+        (GameObject, GameObject) RemoveObject = _nodeManage.RemoveNode(value);
+        if (RemoveObject.Item1 == null) _textField.text = "NotFound";
+        else {
+            Destroy(RemoveObject.Item1);
+            Destroy(RemoveObject.Item2);
+            _textField.text = "Remove!";
+        }
+    }
+
+    public void SetRootNodeValue(int value){
+        if (_treeManage.GetTreeNodeCount() == 1){
             _treeManage.SetRootValue(value);
         }
     }
@@ -151,14 +145,14 @@ public class TreeUIManager : MonoBehaviour
     public void ShowNodeInfoUI(float widthRatio, float deltaTime){
         if(!_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = false;
-        _nodeInfoUI.ShowPanelUI(widthRatio, deltaTime, 0);
+        _nodeInfoPanel.ShowPanelUI(widthRatio, deltaTime, 0);
     }
 
     public void CloseNodeInfoUI(float deltaTime){
         if (_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = true;
         Camera.main.DOCameraZoom(4, deltaTime);
-        _nodeInfoUI.ClosePanelUI(deltaTime);
+        _nodeInfoPanel.ClosePanelUI(deltaTime);
     }
 
     public void ShowAddPanelUI(float deltaTime){
@@ -173,6 +167,32 @@ public class TreeUIManager : MonoBehaviour
         InputManager.current.SetMouseDeltaAllow(true);
         _isAddNodePanelClose = true;
         _addPanel.GetComponent<CanvasGroup>().ClosePanelGroupUIByAlpha(deltaTime);
+    }
+
+    public void ShowFindPanel(float deltaTime){
+        _findRemovePanel.GetComponent<RectTransform>().ShowPanelUI(0.5f, deltaTime, 3);
+    }
+
+
+
+    public void OnAddValueChanged(string s){
+        if(int.TryParse(s, out int result)){
+            if(!_addPanel.addButton.interactable) _addPanel.addButton.interactable = true;
+            TMP_InputField inputField = _addPanel.InputField;
+            _addPanel.NodeUI.NodeValueText.text = result.ToString();
+        }else{
+            _addPanel.addButton.interactable = false;
+            _addPanel.NodeUI.NodeValueText.text = "X";
+        }
+    }
+
+    public void OnFindValueChanged(string s){
+        if(int.TryParse(s, out int result)){
+            FindNode(result);
+        }else{
+            _findRemovePanel._findButton.interactable = false;
+
+        }
     }
 
     public static void InstantiateNodeInfo(int value){

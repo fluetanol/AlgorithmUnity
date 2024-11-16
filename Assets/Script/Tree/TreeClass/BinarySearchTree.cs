@@ -35,11 +35,10 @@ public sealed class BinarySearchTree : BinaryTree{
         bool isFind = true;
         if(depth>_height) {
             _height = depth;
-            //Camera.main.orthographicSize += 0.5f;
         }
-
         if(node.Value < currentNode.Value){
             if(currentNode.left == null)  {
+                treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, true, depth);
                 edge.SetEdgeNode(node.transform, currentNode.transform);
             }
@@ -51,6 +50,7 @@ public sealed class BinarySearchTree : BinaryTree{
         }
         else if(node.Value > currentNode.Value){
             if (currentNode.right == null)  {
+                treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, false, depth);
                 edge.SetEdgeNode(node.transform, currentNode.transform);
             }
@@ -71,6 +71,7 @@ public sealed class BinarySearchTree : BinaryTree{
         if(Value == node.Value)  return node;
         if(Value < node.Value) find = findNode(Value, node.left);
         else if(Value > node.Value) find = findNode(Value, node.right);
+
         return find;
     }
 

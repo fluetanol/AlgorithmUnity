@@ -19,12 +19,24 @@ public static class PanelShow
     public static void ShowPanelUI(this RectTransform panel, float widthRatio, float deltaTime, int moveFlag = 0)
     {
         float moveX = Screen.width * widthRatio;
-        panel.sizeDelta = new Vector2(moveX, panel.sizeDelta.y);
+        float moveY = Screen.height * widthRatio;
+        if(moveFlag == 1) moveX = -moveX;
+        else if(moveFlag == 3) moveY = -moveY;
+
+        if(moveFlag == 0 || moveFlag == 1) panel.sizeDelta = new Vector2(moveX, panel.sizeDelta.y);
+        else panel.sizeDelta = new Vector2(panel.sizeDelta.x, moveY);
+
+
         if (!panel.gameObject.activeSelf)
         {
             panel.gameObject.SetActive(true);
-            panel.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad);
+            if(moveFlag == 0 || moveFlag == 1)
+                panel.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad);
+            else
+                panel.DOAnchorPosY(-moveY, deltaTime).SetEase(Ease.InOutQuad);
         }
+
+
     }
 
     public static void ShowPanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime)
