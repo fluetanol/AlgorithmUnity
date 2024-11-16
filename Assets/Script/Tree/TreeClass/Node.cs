@@ -1,10 +1,8 @@
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 
-public class Node: MonoBehaviour
+public class Node: NodeUI
 {
     [Header("Node Info")]
     public int BF = 0;
@@ -17,16 +15,9 @@ public class Node: MonoBehaviour
     public Node right = null;
     public Node left = null;
 
-    [Header("Text")]
-    public TMP_Text NodeValueText;
-
-    [Header("Coponent")]
-    public Button button;
-    public Image image;
-
-    public void SetNodeValue(int value){
-        Value = value;  
-        NodeValueText.text = value.ToString();
+    public override void SetNodeValue(int value){
+        base.SetNodeValue(value);
+        Value = value;
     }
 
     public void SetCenterPos(){
@@ -42,8 +33,8 @@ public class Node: MonoBehaviour
     public void OnNodePress(float deltaTime){
         Vector3 position = this.transform.position;
         position.z = Camera.main.transform.position.z;
-        TreeUIManager.FocusNode(position, deltaTime);
-        TreeUIManager.ShowNodeInfoUI(0.3f, deltaTime);
+        TreeUIManager.current.FocusNode(position, deltaTime);
+        TreeUIManager.current.ShowNodeInfoUI(0.3f, deltaTime);
         NodeInfoPanelManager.current.SetNodeInfo(Value, Depth, BF);
     }
 }

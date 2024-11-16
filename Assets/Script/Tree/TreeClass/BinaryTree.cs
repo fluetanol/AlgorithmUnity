@@ -57,8 +57,9 @@ public abstract class BinaryTree{
     }
 
     //노드 이동 관련 애니메이션으로, DOTween과 TreeUIManager등의 static함수들과의 의존성이 상당히 높은 구역입니다.
+    //이거 바깥으로 빼는 방법이 없을까...?
     public void NodeMoveAnimation(Node focusNode, float seconds){
-        TreeUIManager.CloseNodeInfoUI(0.5f);
+        TreeUIManager.current.CloseNodeInfoUI(0.5f);
         Camera.main.DOOrthoSize(4, seconds);
         Sequence sequence = DOTween.Sequence();
 

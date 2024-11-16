@@ -3,15 +3,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
+
+
+
+
 public class InputManager : MonoBehaviour
 {
-    InputAction inputAction;
+    public static InputManager current;
     [SerializeField] InputControlMap controlMap;
     
     Vector2 mouseVelocity;
-    bool isMousePressed;
+    public bool isMouseDeltaAllow = true;
+    private bool isMousePressed;
+
 
     void Awake(){
+        current = this;
         controlMap = new InputControlMap();
     }
     
@@ -44,26 +51,24 @@ public class InputManager : MonoBehaviour
     }
 
     void FixedUpdate() {
-        if(isMousePressed){
+        if(isMousePressed && isMouseDeltaAllow){
             Camera.main.transform.position += new Vector3(mouseVelocity.x, mouseVelocity.y, 0) * Time.fixedDeltaTime;
         }
     }
 
 
 
-
-
     private void CloseFloatingUI(){
-        if (EventSystem.current.currentSelectedGameObject == null)
-        {
-            TreeUIManager.CloseNodeInfoUI(0.5f);
+        if (EventSystem.current.currentSelectedGameObject == null){
+            TreeUIManager.current.CloseNodeInfoUI(0.5f);
+            TreeUIManager.current.CloseAddPanelUI(0.5f);
         }
     }
 
     void OnMouseDelta(InputAction.CallbackContext context){
+        if(!isMouseDeltaAllow) return;
         if(isMousePressed){
             mouseVelocity = -context.ReadValue<Vector2>();
-            //print(velocity.magnitude);
             if (mouseVelocity.magnitude <= 5){
                 mouseVelocity = Vector2.zero;
             }
@@ -71,6 +76,7 @@ public class InputManager : MonoBehaviour
     }
 
     void OnMouseClick(InputAction.CallbackContext context){
+        if(!isMouseDeltaAllow) return;
         if(context.ReadValue<float>()>=0.5f){
             //print("Mouse Pressed");
             isMousePressed = true;
@@ -91,6 +97,10 @@ public class InputManager : MonoBehaviour
             }
             yield return new WaitForFixedUpdate();
         }
+    }
+
+    public void SetMouseDeltaAllow(bool isAllow){
+        isMouseDeltaAllow = isAllow;
     }
 
 }

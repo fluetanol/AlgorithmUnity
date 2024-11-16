@@ -8,8 +8,6 @@ public enum ObjectPoolType{
     Edge = 1
 }
 
-
-
 public class ObjectPool : MonoBehaviour
 {
     [Serializable]
@@ -19,8 +17,11 @@ public class ObjectPool : MonoBehaviour
         public GameObject prefab;
     }
     
+    
     [SerializeField] private ObjectPoolData _nodePoolData = new();
     [SerializeField] private ObjectPoolData _edgePoolData = new();
+
+    private static GameObject thisObject;
 
     private static Queue<Transform> s_nodePoolQueue;
     private static Queue<Transform> s_edgePoolQueue;
@@ -28,6 +29,7 @@ public class ObjectPool : MonoBehaviour
     private static GameObject s_edgePrefab;
 
     private void Awake(){
+        thisObject = gameObject;
         _nodePoolData._poolQueue = new List<Transform>();
         _edgePoolData._poolQueue = new List<Transform>();
 
@@ -63,8 +65,8 @@ public class ObjectPool : MonoBehaviour
 
     public static void DestoyPoolObject(GameObject obj, ObjectPoolType type){
         var (q, _) = minifactory(type);
+        obj.transform.parent = thisObject.transform;
         q.Enqueue(obj.transform);
-       // obj.transform.parent = null;
         obj.SetActive(false);
     }
 

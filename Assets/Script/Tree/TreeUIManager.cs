@@ -1,22 +1,31 @@
 using DG.Tweening;
 using TMPro;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
 
 public class TreeUIManager : MonoBehaviour
 {
+    public static TreeUIManager current{get; private set;}
+
+    [Header("UIElement")]
     [SerializeField] private TMP_InputField     inputField;
     [SerializeField] private TMP_Text           textField;
+    [SerializeField] private Button             _addNodeButton;
     [SerializeField] private GameObject         _nodeInfoPrefab;
     [SerializeField] private Transform          _nodeInfoParent;
     [SerializeField] private Transform          _traversalOption;
-    [SerializeField] private RectTransform      _nodeInfoUI;
 
+    [Header("Panel")]
+    [SerializeField] private RectTransform      _nodeInfoUI;
+    [SerializeField] private RectTransform      _addPanel;
+
+    //static managed;
     private static           GameObject         _staticNodeInfoPrefab;
     private static           Transform          _staticNodeInfoParent;
-    private static           RectTransform      _staticNodeInfoUI;
-    private static           bool               _isShowNodeInfoClose = true;
     
+    //dependency interface
     private                 ITreeTraversal       _treeTraversal;
     private                 ITreeManage          _treeManage;
     private                 INodeManage          _nodeManage;
@@ -25,8 +34,14 @@ public class TreeUIManager : MonoBehaviour
     private                 TraversalMode        _currentMode = TraversalMode.PreOrder;
 
 
+    //이거 bit처리로 바꿀 필요가 있음
+    private                 bool                _isShowNodeInfoClose = true;
+    private                 bool                _isAddNodePanelClose = true;
+
+
 
     private void Awake(){
+        current = this;
         AlgorithmTreeManager treeManager = FindObjectOfType<AlgorithmTreeManager>();
         _treeManage = treeManager;
         _nodeManage = treeManager;
@@ -36,7 +51,8 @@ public class TreeUIManager : MonoBehaviour
     private void OnEnable() {
         _staticNodeInfoPrefab = _nodeInfoPrefab;
         _staticNodeInfoParent = _nodeInfoParent;
-        _staticNodeInfoUI = _nodeInfoUI;
+        //_addNodeButton.onClick.AddListener(delegate{ShowAddPanelUI(0.1f, 0.5f);});
+        _addNodeButton.onClick.AddListener(() => ShowAddPanelUI(0.5f));
     }
 
     public void SetNewTree(int num){
@@ -127,30 +143,36 @@ public class TreeUIManager : MonoBehaviour
         _treeManage.ResetRecentNode();
     }
 
-    public static void FocusNode(Vector3 NodePosition, float deltaTime)
-    {
+    public void FocusNode(Vector3 NodePosition, float deltaTime){
         Camera.main.DOCameraMove(NodePosition, deltaTime);
         Camera.main.DOCameraZoom(2.5f, deltaTime);
     }
 
-    public static void CloseNodeInfoUI(float deltaTime){
-        if(_isShowNodeInfoClose) return;
-        _isShowNodeInfoClose = true;
-        Camera.main.DOCameraZoom(4, 0.5f);
-        _staticNodeInfoUI.DOAnchorPosX(0, deltaTime).SetEase(Ease.InOutQuad).onComplete
-                 += () => _staticNodeInfoUI.gameObject.SetActive(false);
-    }
-
-    public static void ShowNodeInfoUI(float widthRatio, float deltaTime){
+    public void ShowNodeInfoUI(float widthRatio, float deltaTime){
         if(!_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = false;
-        
-        float moveX = Screen.width * widthRatio;
-        _staticNodeInfoUI.sizeDelta = new Vector2(moveX, _staticNodeInfoUI.sizeDelta.y);
-        if (!_staticNodeInfoUI.gameObject.activeSelf){
-            _staticNodeInfoUI.gameObject.SetActive(true);
-            _staticNodeInfoUI.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad);
-        }
+        _nodeInfoUI.ShowPanelUI(widthRatio, deltaTime, 0);
+    }
+
+    public void CloseNodeInfoUI(float deltaTime){
+        if (_isShowNodeInfoClose) return;
+        _isShowNodeInfoClose = true;
+        Camera.main.DOCameraZoom(4, deltaTime);
+        _nodeInfoUI.ClosePanelUI(deltaTime);
+    }
+
+    public void ShowAddPanelUI(float deltaTime){
+        if(!_isAddNodePanelClose) return;
+        InputManager.current.SetMouseDeltaAllow(false);
+        _isAddNodePanelClose = false;
+        _addPanel.GetComponent<CanvasGroup>().ShowPanelGroupUIByAlpha(1, deltaTime);
+    }
+
+    public void CloseAddPanelUI(float deltaTime){
+        if (_isAddNodePanelClose) return;
+        InputManager.current.SetMouseDeltaAllow(true);
+        _isAddNodePanelClose = true;
+        _addPanel.GetComponent<CanvasGroup>().ClosePanelGroupUIByAlpha(deltaTime);
     }
 
     public static void InstantiateNodeInfo(int value){
@@ -160,3 +182,7 @@ public class TreeUIManager : MonoBehaviour
 
 }
 
+
+public static class NodeMove{
+    
+}

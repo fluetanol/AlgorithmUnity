@@ -2,8 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-
-public class NodeInfoPanelManager : MonoBehaviour, IPointerDownHandler
+public class NodeInfoPanelManager : PanelBlocking
 {
     public static NodeInfoPanelManager current;
     [SerializeField] private TMP_Text rootleef;
@@ -21,7 +20,4 @@ public class NodeInfoPanelManager : MonoBehaviour, IPointerDownHandler
         this.degree.text = degree.ToString();
     }
 
-    void IPointerDownHandler.OnPointerDown(PointerEventData eventData){
-        EventSystem.current.SetSelectedGameObject(gameObject);
-    }
 }
