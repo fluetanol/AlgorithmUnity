@@ -34,7 +34,7 @@ public class Node: NodeUI
         Vector3 position = this.transform.position;
         position.z = Camera.main.transform.position.z;
         TreeUIManager.current.FocusNode(position, deltaTime);
-        TreeUIManager.current.ShowNodeInfoUI(0.3f, deltaTime);
+        TreeUIManager.current.ShowNodeInfoUI(deltaTime);
         NodeInfoPanel.current.SetNodeInfo(Value, Depth, BF);
     }
 }

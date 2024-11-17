@@ -81,7 +81,7 @@ public sealed class BinarySearchTree : BinaryTree{
             //EventSystem.current.SetSelectedGameObject(null);
         }
         node.image.color = node.button.colors.selectedColor;
-        node.button.Select();
+        //node.button.Select();
         _recentFindNode = node;
     }
 

@@ -7,36 +7,32 @@ using UnityEngine.UI;
 
 public static class PanelShow
 {
-    //flag = 0 -> 좌로 이동, 1 -> 우로 이동, 2 -> 상단 이동, 3 -> 하단 이동
-    public static void ClosePanelUI(this RectTransform panel, float deltaTime, int moveFlag = 0)
+    public static void MovePanelUIByHorizontal(this RectTransform panel, float deltaTime, float targetX, bool activeControl = false)
     {
-        panel.DOAnchorPosX(-panel.sizeDelta.y, deltaTime).SetEase(Ease.InOutQuad).
-        onComplete += () => panel.gameObject.SetActive(false);
+        bool flag = false;
+        if (activeControl && panel.gameObject.activeSelf == false) {
+            panel.gameObject.SetActive(true);
+            flag = true;
+        }
+        panel.DOAnchorPosX(targetX, deltaTime).SetEase(Ease.InOutQuad).
+        onComplete += () => {
+            if(activeControl && panel.gameObject.activeSelf && !flag) 
+                panel.gameObject.SetActive(false);
+        };
     }
 
-
-    //flag = 0 -> 좌로 이동, 1 -> 우로 이동, 2 -> 상단 이동, 3 -> 하단 이동
-    public static void ShowPanelUI(this RectTransform panel, float widthRatio, float deltaTime, int moveFlag = 0)
-    {
-        float moveX = Screen.width * widthRatio;
-        float moveY = Screen.height * widthRatio;
-        if(moveFlag == 1) moveX = -moveX;
-        else if(moveFlag == 3) moveY = -moveY;
-
-        if(moveFlag == 0 || moveFlag == 1) panel.sizeDelta = new Vector2(moveX, panel.sizeDelta.y);
-        else panel.sizeDelta = new Vector2(panel.sizeDelta.x, moveY);
-
-
-        if (!panel.gameObject.activeSelf)
-        {
+    public static void MovePanelUIByVertical(this RectTransform panel, float deltaTime, float targetY, bool activeControl = false){
+        bool flag = false;
+        
+        if(activeControl && panel.gameObject.activeSelf == false) {
             panel.gameObject.SetActive(true);
-            if(moveFlag == 0 || moveFlag == 1)
-                panel.DOAnchorPosX(-moveX, deltaTime).SetEase(Ease.InOutQuad);
-            else
-                panel.DOAnchorPosY(-moveY, deltaTime).SetEase(Ease.InOutQuad);
+            flag = true;
         }
-
-
+        panel.DOAnchorPosY(targetY, deltaTime).SetEase(Ease.InOutQuad).
+        onComplete += () => {
+            if(activeControl && panel.gameObject.activeSelf && !flag) 
+                panel.gameObject.SetActive(false);
+        };
     }
 
     public static void ShowPanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime)

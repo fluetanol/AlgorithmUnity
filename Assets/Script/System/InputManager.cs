@@ -4,9 +4,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 
-
-
-
 public class InputManager : MonoBehaviour
 {
     public static InputManager current;
@@ -59,7 +56,7 @@ public class InputManager : MonoBehaviour
     private void CloseFloatingUI(){
         if (EventSystem.current.currentSelectedGameObject == null){
             TreeUIManager.current.CloseNodeInfoUI(0.5f);
-            TreeUIManager.current.CloseAddPanelUI(0.5f);
+            TreeUIManager.current.CloseTextFieldPanelUI(0.5f);
         }
     }
 

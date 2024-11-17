@@ -1,9 +1,11 @@
 using DG.Tweening;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 
 
 public class TreeUIManager : MonoBehaviour
@@ -13,20 +15,22 @@ public class TreeUIManager : MonoBehaviour
     [Header("UIElement")]
     [SerializeField] private TMP_Text           _textField;
     [SerializeField] private Button             _addNodeButton;
+    [SerializeField] private Button             _findNodeButton;    
+
+
     [SerializeField] private GameObject         _nodeInfoPrefab;
     [SerializeField] private Transform          _nodeInfoParent;
     [SerializeField] private Transform          _traversalOption;
 
     [Header("Panel")]
     [SerializeField] private RectTransform      _nodeInfoPanel;
-    [SerializeField] private AddPanel           _addPanel;
-    [SerializeField] private FindRemovePanel    _findRemovePanel;
+    [SerializeField] private TextFieldPanel    _textFieldPanel;
 
     //static managed;
     private static           GameObject         _staticNodeInfoPrefab;
     private static           Transform          _staticNodeInfoParent;
     
-    //dependency interface
+    //dependency injection interface
     private                 ITreeTraversal       _treeTraversal;
     private                 ITreeManage          _treeManage;
     private                 INodeManage          _nodeManage;
@@ -37,8 +41,7 @@ public class TreeUIManager : MonoBehaviour
 
     //이거 bit처리로 바꿀 필요가 있음
     private                 bool                _isShowNodeInfoClose = true;
-    private                 bool                _isAddNodePanelClose = true;
-
+    private                 bool                _isTextFieldClose = true;   
 
 
     private void Awake(){
@@ -53,10 +56,10 @@ public class TreeUIManager : MonoBehaviour
         _staticNodeInfoPrefab = _nodeInfoPrefab;
         _staticNodeInfoParent = _nodeInfoParent;
         //_addNodeButton.onClick.AddListener(delegate{ShowAddPanelUI(0.1f, 0.5f);});
-        _addNodeButton.onClick.AddListener(() => ShowAddPanelUI(0.5f));
-        _addPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
-        _addPanel.addButton.onClick.AddListener(() => AddNode(int.Parse(_addPanel.NodeUI.NodeValueText.text)));
-        _findRemovePanel._InputField.onValueChanged.AddListener((s) => OnFindValueChanged(s));
+
+        _addNodeButton.onClick.AddListener(() => OnAddClick(0.5f));
+        _findNodeButton.onClick.AddListener(() => OnFindClick(0.5f));
+        _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
     }
 
     public void SetNewTree(int num){
@@ -64,7 +67,6 @@ public class TreeUIManager : MonoBehaviour
     }
 
     public void AddNode(int value){
-        EventSystem.current.SetSelectedGameObject(null);
         Node node = _nodeManage.NewNode(value);
         Edge edge = _nodeManage.NewEdge();
         if(_nodeManage.AddNode(node , edge)){
@@ -142,58 +144,82 @@ public class TreeUIManager : MonoBehaviour
         Camera.main.DOCameraZoom(2.5f, deltaTime);
     }
 
-    public void ShowNodeInfoUI(float widthRatio, float deltaTime){
+    public void ShowNodeInfoUI(float deltaTime){
         if(!_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = false;
-        _nodeInfoPanel.ShowPanelUI(widthRatio, deltaTime, 0);
+        _nodeInfoPanel.MovePanelUIByHorizontal(deltaTime, -_nodeInfoPanel.sizeDelta.x, true);
     }
 
     public void CloseNodeInfoUI(float deltaTime){
         if (_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = true;
         Camera.main.DOCameraZoom(4, deltaTime);
-        _nodeInfoPanel.ClosePanelUI(deltaTime);
+        _nodeInfoPanel.MovePanelUIByHorizontal(deltaTime, _nodeInfoPanel.sizeDelta.x, true);
     }
 
-    public void ShowAddPanelUI(float deltaTime){
-        if(!_isAddNodePanelClose) return;
-        InputManager.current.SetMouseDeltaAllow(false);
-        _isAddNodePanelClose = false;
-        _addPanel.GetComponent<CanvasGroup>().ShowPanelGroupUIByAlpha(1, deltaTime);
+    //TextFieldPanel을 여닫는 기능
+    public void ShowTextFieldPanelUI(float deltaTime){
+        if (!_isTextFieldClose)  return;
+        _isTextFieldClose = false;
+
+        RectTransform rect = _textFieldPanel.GetComponent<RectTransform>();
+        rect.MovePanelUIByVertical(deltaTime, rect.sizeDelta.y);
+        _textFieldPanel.ResetUIListener(ETextFieldUIType.OpenButton);
+        _textFieldPanel.OpenButton.onClick.AddListener(() => CloseTextFieldPanelUI(0.5f));
+
+        
     }
 
-    public void CloseAddPanelUI(float deltaTime){
-        if (_isAddNodePanelClose) return;
+    public void CloseTextFieldPanelUI(float deltaTime){
+        if(_isTextFieldClose) return;
+        _isTextFieldClose = true;
         InputManager.current.SetMouseDeltaAllow(true);
-        _isAddNodePanelClose = true;
-        _addPanel.GetComponent<CanvasGroup>().ClosePanelGroupUIByAlpha(deltaTime);
+        _textFieldPanel.GetComponent<RectTransform>().
+        MovePanelUIByVertical(deltaTime, _textFieldPanel.OriginAnchor.y);
+        
+        _textFieldPanel.ResetAllValue();
+        _textFieldPanel.ResetUIListener(ETextFieldUIType.OpenButton);
+        _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
     }
 
-    public void ShowFindPanel(float deltaTime){
-        _findRemovePanel.GetComponent<RectTransform>().ShowPanelUI(0.5f, deltaTime, 3);
+    //TextFieldPanel의 confirm 버튼 기능
+    public void OnAddClick(float deltaTime){
+        _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        _textFieldPanel.onValueChangedListener((s) => OnAddValueChanged(s));
+    }
+
+    public void OnFindClick(float deltaTime){
+        FindNode(int.Parse(_textFieldPanel.InputField.text));
+        _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        _textFieldPanel.onValueChangedListener((s) => OnFindValueChanged(s));
     }
 
 
-
+    //TextFieldPanel의 inputField 기능
     public void OnAddValueChanged(string s){
-        if(int.TryParse(s, out int result)){
-            if(!_addPanel.addButton.interactable) _addPanel.addButton.interactable = true;
-            TMP_InputField inputField = _addPanel.InputField;
-            _addPanel.NodeUI.NodeValueText.text = result.ToString();
-        }else{
-            _addPanel.addButton.interactable = false;
-            _addPanel.NodeUI.NodeValueText.text = "X";
+        Button button = _textFieldPanel.ConfirmButton;
+        if(TryParseAndButtonInteractable(s, button, out int n)){
+            _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton);
+            _textFieldPanel.ConfirmButton.onClick.AddListener(() => AddNode(n));
         }
     }
 
-    public void OnFindValueChanged(string s){
-        if(int.TryParse(s, out int result)){
-            FindNode(result);
-        }else{
-            _findRemovePanel._findButton.interactable = false;
-
+    public int OnFindValueChanged(string s){
+        Button button = _textFieldPanel.ConfirmButton;
+        if (TryParseAndButtonInteractable(s, button, out int n)){
+            FindNode(n);
+            _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton);
+            _textFieldPanel.ConfirmButton.onClick.AddListener(() => FindNode(int.Parse(_textFieldPanel.InputField.text)));
         }
+        return n;
     }
+
+    private bool TryParseAndButtonInteractable(string s, Button button, out int n){
+        bool result = int.TryParse(s, out n);  
+        button.interactable = result;
+        return result;
+    }
+
 
     public static void InstantiateNodeInfo(int value){
         GameObject g = Instantiate(_staticNodeInfoPrefab, _staticNodeInfoParent);
