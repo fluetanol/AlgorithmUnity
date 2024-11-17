@@ -55,11 +55,10 @@ public class TreeUIManager : MonoBehaviour
     private void OnEnable() {
         _staticNodeInfoPrefab = _nodeInfoPrefab;
         _staticNodeInfoParent = _nodeInfoParent;
-        //_addNodeButton.onClick.AddListener(delegate{ShowAddPanelUI(0.1f, 0.5f);});
-
         _addNodeButton.onClick.AddListener(() => OnAddClick(0.5f));
         _findNodeButton.onClick.AddListener(() => OnFindClick(0.5f));
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
+        _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
     }
 
     public void SetNewTree(int num){

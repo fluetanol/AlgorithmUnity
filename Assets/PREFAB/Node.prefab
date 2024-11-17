@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9137255, g: 0.76862746, b: 0.41568628, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -285,8 +285,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278210047
-  m_fontColor: {r: 1, g: 0.30183384, b: 0, a: 1}
+    rgba: 4293522423
+  m_fontColor: {r: 0.96862745, g: 0.9529412, b: 0.9137255, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -390,6 +390,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef8973fa1cf90d141820c9df4ad1d085, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NodeValueText: {fileID: 7095482076380509752}
+  button: {fileID: 6611690890807603529}
+  image: {fileID: 2106965720151109883}
   BF: 0
   Depth: 0
   Value: 10
@@ -397,6 +400,3 @@ MonoBehaviour:
   Parent: {fileID: 0}
   right: {fileID: 0}
   left: {fileID: 0}
-  NodeValueText: {fileID: 7095482076380509752}
-  button: {fileID: 6611690890807603529}
-  image: {fileID: 2106965720151109883}
