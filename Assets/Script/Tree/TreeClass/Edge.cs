@@ -3,8 +3,8 @@ using UnityEngine;
 public class Edge : MonoBehaviour
 {
     private     LineRenderer    _lineRenderer;
-    public      Transform       Node1;
-    public      Transform       Node2;
+    public      Node       Node1;
+    public      Node       Node2;
 
     private void Awake()
     {
@@ -15,16 +15,16 @@ public class Edge : MonoBehaviour
 
     private void Update()
     {
-        if (Node1 != null && Node2 != null)
+        if (Node1.gameObject.activeSelf && Node2.gameObject.activeSelf)
         {
-            _lineRenderer.SetPosition(0, Node1.position);
-            _lineRenderer.SetPosition(1, Node2.position);
+            _lineRenderer.SetPosition(0, Node1.transform.position);
+            _lineRenderer.SetPosition(1, Node2.transform.position);
         }else{
             ObjectPool.DestoyPoolObject(this.gameObject, ObjectPoolType.Edge);
         }
     }
 
-    public void SetEdgeNode(Transform node1, Transform node2)
+    public void SetEdgeNode(Node node1, Node node2)
     {
         Node1 = node1;
         Node2 = node2;

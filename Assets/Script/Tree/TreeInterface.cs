@@ -15,7 +15,7 @@ public interface INodeManage
     public Node NewNode(int value);
     public Edge NewEdge();
     public bool AddNode(Node node, Edge edge);
-    public (GameObject, GameObject) RemoveNode(int value);
+    public GameObject RemoveNode(int value);
     public bool IsExistNode(int value, out Node node);
 }
 

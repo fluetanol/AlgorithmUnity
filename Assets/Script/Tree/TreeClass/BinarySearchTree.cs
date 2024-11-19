@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ public sealed class BinarySearchTree : BinaryTree{
     }
 
     public override bool Add(Node node, Edge edge) =>addNode(node, edge, Root, 1);
-    public override (GameObject, GameObject) Remove(int Value) => removeNode(Value, Root);
+    public override GameObject Remove(int Value) => removeNode(Value, Root);
     public override Node Find(int Value) => findNode(Value, Root);
 
     public override bool isExist(int Value, out Node node){
@@ -31,6 +32,8 @@ public sealed class BinarySearchTree : BinaryTree{
         }
     }
 
+    private Dictionary<(int, int), Edge> _nodeSet = new();
+
     private bool addNode(Node node, Edge edge, Node currentNode, int depth){
         bool isFind = true;
         if(depth>_height) {
@@ -40,7 +43,7 @@ public sealed class BinarySearchTree : BinaryTree{
             if(currentNode.left == null)  {
                 treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, true, depth);
-                edge.SetEdgeNode(node.transform, currentNode.transform);
+                edge.SetEdgeNode(node, currentNode);
             }
             else{
                 currentNode = currentNode.left;
@@ -52,7 +55,7 @@ public sealed class BinarySearchTree : BinaryTree{
             if (currentNode.right == null)  {
                 treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, false, depth);
-                edge.SetEdgeNode(node.transform, currentNode.transform);
+                edge.SetEdgeNode(node, currentNode);
             }
             else{
                 currentNode = currentNode.right;
@@ -81,24 +84,20 @@ public sealed class BinarySearchTree : BinaryTree{
             //EventSystem.current.SetSelectedGameObject(null);
         }
         node.image.color = node.button.colors.selectedColor;
-        //node.button.Select();
         _recentFindNode = node;
     }
 
-    private (GameObject, GameObject) removeNode(int value, Node node){
+    private GameObject removeNode(int value, Node node){
         ResetRecentNode();
         Node findnode = findNode(value, node);
-        if (findnode == null) return (null, null);
-        
-        GameObject removeObject = null;
-        GameObject removeConnectObject = null;
+        if (findnode == null) return null;
+    
         bool isLeft = false;
         byte count = 0;
         if(findnode.left !=null) count+=1;
         if(findnode.right!=null) count+=1;
 
-        removeObject = findnode.gameObject;
-        //removeConnectObject = findnode.ConnectObject;
+        GameObject removeObject = findnode.gameObject;
         
         if(findnode.Parent !=null){
             if (findnode.Value < findnode.Parent.Value) {
@@ -114,13 +113,13 @@ public sealed class BinarySearchTree : BinaryTree{
         switch (count){
             case 0:
                 //Root노드인데 자식노드도 없어서 지울 이유가 없는 유일한 케이스
-                if (findnode == Root) return (null, null);
+                if (findnode == Root) return null;
             break;
             case 1:
                 //왼쪽 노드가 없는 경우 -> 오른쪽 노드를 끌어 올림
-                if(findnode.left == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject,ref removeConnectObject, isLeft);
+                if(findnode.left == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject, isLeft);
                 //아닌 경우는 왼쪽 노드를 끌어 올림
-                else if(findnode.right == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.left, ref removeObject, ref removeConnectObject, isLeft);
+                else if(findnode.right == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.left, ref removeObject, isLeft);
             break;
             case 2:
                 if(findnode.Parent !=null){
@@ -128,17 +127,19 @@ public sealed class BinarySearchTree : BinaryTree{
                     else findnode.Parent.right = findnode;
                 }
                 Node smallestNode = findSmallestNode(findnode.right);
-                (removeObject, removeConnectObject) = removeNode(smallestNode.Value, smallestNode);
+                removeObject = removeNode(smallestNode.Value, smallestNode);
                 _treeNodeCount += 1;
                 findnode.Value = smallestNode.Value;
                 findnode.GetComponent<Node>().SetNodeValue(findnode.Value);
             break;
         }
         _treeNodeCount-=1;
-        return (removeObject, removeConnectObject);
+        
+        return removeObject;
+
     }
 
-    private void OneChildNodeRemoveUpdate(ref Node parent, ref Node child, ref GameObject removeObject, ref GameObject removeConnectObject, bool isLeft)
+    private void OneChildNodeRemoveUpdate(ref Node parent, ref Node child, ref GameObject removeObject, bool isLeft)
     {
         if (parent != null)
         {

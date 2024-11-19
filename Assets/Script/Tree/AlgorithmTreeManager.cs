@@ -91,7 +91,7 @@ public sealed class AlgorithmTreeManager : MonoBehaviour, INodeManage, ITreeMana
         if(k) BTree.NodeMoveAnimation(node, 0.5f);
         return k;
     }
-    public (GameObject, GameObject) RemoveNode(int value) => BTree.Remove(value);
+    public GameObject RemoveNode(int value) => BTree.Remove(value);
     public bool IsExistNode(int value, out Node node)     => BTree.isExist(value, out node);
     public int  GetTreeNodeCount()                        => BTree.GetNodeCount();
 

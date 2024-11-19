@@ -21,7 +21,7 @@ public abstract class BinaryTree{
     /// </summary>
     /// <param name="Value"></param>
     /// <returns>(삭제된 노드, 삭제된 엣지) </returns>
-    public abstract (GameObject, GameObject) Remove(int Value);
+    public abstract GameObject Remove(int Value);
 
 
     public abstract Node Find(int Value);

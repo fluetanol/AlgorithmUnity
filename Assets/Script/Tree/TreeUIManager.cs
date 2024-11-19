@@ -15,7 +15,8 @@ public class TreeUIManager : MonoBehaviour
     [Header("UIElement")]
     [SerializeField] private TMP_Text           _textField;
     [SerializeField] private Button             _addNodeButton;
-    [SerializeField] private Button             _findNodeButton;    
+    [SerializeField] private Button             _findNodeButton;   
+    [SerializeField] private Button             _removeNodeButton; 
 
 
     [SerializeField] private GameObject         _nodeInfoPrefab;
@@ -57,6 +58,7 @@ public class TreeUIManager : MonoBehaviour
         _staticNodeInfoParent = _nodeInfoParent;
         _addNodeButton.onClick.AddListener(() => OnAddClick(0.5f));
         _findNodeButton.onClick.AddListener(() => OnFindClick(0.5f));
+        _removeNodeButton.onClick.AddListener(() => OnRemoveClick(0.5f));
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
     }
@@ -89,11 +91,15 @@ public class TreeUIManager : MonoBehaviour
     }
 
     public void RemoveNode(int value){
-        (GameObject, GameObject) RemoveObject = _nodeManage.RemoveNode(value);
-        if (RemoveObject.Item1 == null) _textField.text = "NotFound";
+        print("remove!????");
+        GameObject RemoveObject = _nodeManage.RemoveNode(value);
+        print("remove!?");
+        if (RemoveObject== null) _textField.text = "NotFound";
         else {
-            Destroy(RemoveObject.Item1);
-            Destroy(RemoveObject.Item2);
+            print("remove!");
+            ObjectPool.DestoyPoolObject(RemoveObject, ObjectPoolType.Node);
+            //Destroy(RemoveObject.Item1);
+            //Destroy(RemoveObject.Item2);
             _textField.text = "Remove!";
         }
     }
@@ -143,10 +149,11 @@ public class TreeUIManager : MonoBehaviour
         Camera.main.DOCameraZoom(2.5f, deltaTime);
     }
 
+    //NodeInfoPanel을 여닫는 기능
     public void ShowNodeInfoUI(float deltaTime){
         if(!_isShowNodeInfoClose) return;
         _isShowNodeInfoClose = false;
-        _nodeInfoPanel.MovePanelUIByHorizontal(deltaTime, -_nodeInfoPanel.sizeDelta.x, true);
+        _nodeInfoPanel.MovePanelUIByHorizontal(deltaTime, -_nodeInfoPanel.sizeDelta.x + 1, true);
     }
 
     public void CloseNodeInfoUI(float deltaTime){
@@ -165,8 +172,6 @@ public class TreeUIManager : MonoBehaviour
         rect.MovePanelUIByVertical(deltaTime, rect.sizeDelta.y);
         _textFieldPanel.ResetUIListener(ETextFieldUIType.OpenButton);
         _textFieldPanel.OpenButton.onClick.AddListener(() => CloseTextFieldPanelUI(0.5f));
-
-        
     }
 
     public void CloseTextFieldPanelUI(float deltaTime){
@@ -193,6 +198,11 @@ public class TreeUIManager : MonoBehaviour
         _textFieldPanel.onValueChangedListener((s) => OnFindValueChanged(s));
     }
 
+    public void OnRemoveClick(float deltaTime){
+        _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        _textFieldPanel.onValueChangedListener((s) => OnRemoveValueChanged(s));
+    }
+
 
     //TextFieldPanel의 inputField 기능
     public void OnAddValueChanged(string s){
@@ -212,6 +222,15 @@ public class TreeUIManager : MonoBehaviour
         }
         return n;
     }
+
+    public void OnRemoveValueChanged(string s){
+        Button button = _textFieldPanel.ConfirmButton;
+        if (TryParseAndButtonInteractable(s, button, out int n)){
+            _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton);
+            _textFieldPanel.ConfirmButton.onClick.AddListener(() => RemoveNode(n));
+        }
+    }
+
 
     private bool TryParseAndButtonInteractable(string s, Button button, out int n){
         bool result = int.TryParse(s, out n);  

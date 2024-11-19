@@ -223,7 +223,7 @@ public sealed class AVLTree : BinaryTree
         throw new System.NotImplementedException();
     }
 
-    public override (GameObject, GameObject) Remove(int Value)
+    public override GameObject Remove(int Value)
     {
         throw new System.NotImplementedException();
     }
