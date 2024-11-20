@@ -75,8 +75,8 @@ public class TreeUIManager : MonoBehaviour
         }
         else{
             _textField.text = "Fail Add Node :" + value;
-            Destroy(node.gameObject);
-            Destroy(edge.gameObject);
+            ObjectPool.DestoyPoolObject(node.gameObject, ObjectPoolType.Node);
+            ObjectPool.DestoyPoolObject(edge.gameObject, ObjectPoolType.Edge);
         }
     }
 

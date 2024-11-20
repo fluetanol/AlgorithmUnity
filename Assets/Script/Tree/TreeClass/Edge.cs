@@ -3,8 +3,8 @@ using UnityEngine;
 public class Edge : MonoBehaviour
 {
     private     LineRenderer    _lineRenderer;
-    public      Node       Node1;
-    public      Node       Node2;
+    public      Node       Node1;   //tree에서는 자식 노드를 가리키기를 강력히 권장함
+    public      Node       Node2;   //tree에서는 부모 노드를 가리키기를 강력히 권장함
 
     private void Awake()
     {
@@ -15,7 +15,7 @@ public class Edge : MonoBehaviour
 
     private void Update()
     {
-        if (Node1.gameObject.activeSelf && Node2.gameObject.activeSelf)
+        if (Node1 != null && Node2 != null)
         {
             _lineRenderer.SetPosition(0, Node1.transform.position);
             _lineRenderer.SetPosition(1, Node2.transform.position);

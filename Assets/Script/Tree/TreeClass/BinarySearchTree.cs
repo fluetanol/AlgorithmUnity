@@ -34,34 +34,37 @@ public sealed class BinarySearchTree : BinaryTree{
 
     private Dictionary<(int, int), Edge> _nodeSet = new();
 
+    /// <summary>
+    /// 노드를 추가하는 함수
+    /// </summary>
+    /// <param name="node"> 현재 삽입하려는 노드 객체</param>
+    /// <param name="edge"> 노드를 잇는 엣지 객체</param>
+    /// <param name="currentNode">현재 탐색중인 노드 객체 (최종 목적지에선 node의 부모 노드가 된다)</param>
+    /// <param name="depth">깊이</param>
+    /// <returns> 삽입이 되었는지 여부</returns>
     private bool addNode(Node node, Edge edge, Node currentNode, int depth){
         bool isFind = true;
         if(depth>_height) {
             _height = depth;
         }
+
         if(node.Value < currentNode.Value){
             if(currentNode.left == null)  {
                 treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, true, depth);
                 edge.SetEdgeNode(node, currentNode);
+                node.ParentEdge = edge;
             }
-            else{
-                currentNode = currentNode.left;
-                depth+=1;
-                isFind = addNode(node, edge, currentNode, depth);
-            }
+            else isFind = addNode(node, edge, currentNode.left, ++depth);
         }
         else if(node.Value > currentNode.Value){
             if (currentNode.right == null)  {
                 treeNodeSet.Add(node);
                 PlaceNodeObject(ref node, ref currentNode, false, depth);
                 edge.SetEdgeNode(node, currentNode);
+                node.ParentEdge = edge;
             }
-            else{
-                currentNode = currentNode.right;
-                depth+=1;
-                isFind = addNode(node, edge, currentNode, depth);
-            }
+            else  isFind = addNode(node, edge, currentNode.right, ++depth);
         }
         else if (node.Value == currentNode.Value) return false;
         return isFind;
@@ -102,24 +105,31 @@ public sealed class BinarySearchTree : BinaryTree{
         if(findnode.Parent !=null){
             if (findnode.Value < findnode.Parent.Value) {
                 isLeft = true;
-                findnode.Parent.left = null;
+               // findnode.Parent.left = null;
             }
             else{
                 isLeft = false;
-                findnode.Parent.right = null;
+              //  findnode.Parent.right = null;
             }
         }
 
+        findnode.ParentEdge.Node2 = null;
         switch (count){
+            //리프 노드의 경우 그냥 지우면 된다
             case 0:
+                nodeWidthControl(ref findnode, isLeft, false);
                 //Root노드인데 자식노드도 없어서 지울 이유가 없는 유일한 케이스
                 if (findnode == Root) return null;
             break;
             case 1:
+
                 //왼쪽 노드가 없는 경우 -> 오른쪽 노드를 끌어 올림
-                if(findnode.left == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject, isLeft);
+                if(findnode.left == null)  {
+                    OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.right, ref removeObject, isLeft);
+                }
                 //아닌 경우는 왼쪽 노드를 끌어 올림
                 else if(findnode.right == null)  OneChildNodeRemoveUpdate(ref findnode.Parent, ref findnode.left, ref removeObject, isLeft);
+           
             break;
             case 2:
                 if(findnode.Parent !=null){
@@ -139,31 +149,38 @@ public sealed class BinarySearchTree : BinaryTree{
 
     }
 
-    private void OneChildNodeRemoveUpdate(ref Node parent, ref Node child, ref GameObject removeObject, bool isLeft)
-    {
-        if (parent != null)
-        {
-            if (isLeft) parent.left = child;
-            else parent.right = child;
+    private void OneChildNodeRemoveUpdate(ref Node parent, ref Node child, ref GameObject removeObject, bool isLeft){
+        bool isChildLeft = child.isLeft;
+        if (parent != null){
+            if (isLeft) {
+                parent.left = child;
+                child.isLeft = true;
+            }
+            else {
+                parent.right = child;
+                child.isLeft = false;
+            }
         }
 
         child.Parent = parent;
+        child.ParentEdge.Node2 = parent;
         child.transform.position = removeObject.transform.position;
-        if (parent != null)
-        {
+
+
+        if (parent != null) {
             child.transform.parent = parent.transform;
-            //child.ConnectObject.transform.parent = parent.NodeObject.transform;
-            //child.ConnectObject.transform.position = removeConnectObject.transform.position;
-            //child.ConnectObject.transform.rotation = removeConnectObject.transform.rotation;
+
         }
+
         //root를 지우는 경우
         else
         {
             child.transform.parent = null;
             Root = child;
-            //removeConnectObject = child.ConnectObject;
             AlgorithmTreeManager.RollBackStartNode();
         }
+
+
     }
 
 

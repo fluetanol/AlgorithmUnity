@@ -15,6 +15,9 @@ public class Node: NodeUI
     public Node right = null;
     public Node left = null;
 
+    public Edge ParentEdge = null; //부모와 연결된 엣지, 따라서 루트 노드는 null이여야만 한다.
+    
+
     public override void SetNodeValue(int value){
         base.SetNodeValue(value);
         Value = value;

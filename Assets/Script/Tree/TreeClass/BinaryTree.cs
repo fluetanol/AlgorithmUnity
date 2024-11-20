@@ -19,7 +19,7 @@ public abstract class BinaryTree{
     /// <summary>
     /// 찾은 값에 기반하여 삭제될 노드와 엣지 쌍을 반환
     /// </summary>
-    /// <param name="Value"></param>
+    /// <param name="Value"> 삭제하려는 값 </param>
     /// <returns>(삭제된 노드, 삭제된 엣지) </returns>
     public abstract GameObject Remove(int Value);
 
@@ -84,18 +84,19 @@ public abstract class BinaryTree{
     }
 
 
-    private void nodeWidthControl(ref Node node, bool isLeft){
+    protected void nodeWidthControl(ref Node node, bool isLeft, bool isAdd = true){
         if (node == Root){
             return;
         }
+        //add동작은 넓어져야 한다.
         else if (node.isLeft == isLeft){
-            nodeWidthControl(ref node.Parent, isLeft);
+            nodeWidthControl(ref node.Parent, isLeft, isAdd);
         }
         else if(node.isLeft != isLeft){
             float offset = isLeft ? -1 : 1;
-            Vector3 dir = Vector3.right * offset;
+            Vector3 dir = isAdd ? Vector3.right * offset : Vector3.left * offset;
             _nodePosList.Add((node,dir));
-            nodeWidthControl(ref node.Parent, node.isLeft);
+            nodeWidthControl(ref node.Parent, node.isLeft, isAdd);
         }
     }
 
