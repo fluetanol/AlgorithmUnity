@@ -63,6 +63,9 @@ public class TreeUIManager : MonoBehaviour
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
     }
 
+    void Start(){
+    }
+
     public void SetNewTree(int num){
         _treeManage.SetNewTree(num);
     }

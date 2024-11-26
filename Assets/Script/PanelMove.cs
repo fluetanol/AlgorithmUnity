@@ -35,14 +35,28 @@ public static class PanelShow
         };
     }
 
-    public static void ShowPanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime)
+    public static Tweener DOShowPanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime)
     {
+        Tweener tw = null;
         Image panelImage = panel.GetComponent<Image>();
         if (!panel.gameObject.activeSelf)
         {
             panel.gameObject.SetActive(true);
-            panelImage.DOColor(targetColor, deltaTime);
+            tw = panelImage.DOColor(targetColor, deltaTime);
         }
+        return tw;
+    }
+
+    public static Tweener DOHidePanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime, Ease ease = Ease.InOutQuad)
+    {
+        Tweener tw = null;
+        Image panelImage = panel.GetComponent<Image>();
+        if (panel.gameObject.activeSelf)
+        {
+            tw = panelImage.DOColor(targetColor, deltaTime).SetEase(ease);
+            tw.onComplete += () => panel.gameObject.SetActive(false);
+        }
+        return tw;
     }
 
     public static void ShowPanelGroupUIByAlpha(this CanvasGroup group, float alpha, float duration)

@@ -7,7 +7,7 @@ public static class CameraMoveExtension{
         return camera.transform.DOMove(targetPos,seconds).SetEase(ease);
     }
 
-    public static Tween DOCameraZoom(this Camera camera, float targetSize, float seconds, Ease ease = Ease.InOutQuad){
+    public static Tweener DOCameraZoom(this Camera camera, float targetSize, float seconds, Ease ease = Ease.InOutQuad){
         if(camera.orthographicSize == targetSize) return null;
         return camera.DOOrthoSize(targetSize, seconds).SetEase(ease);   
     }

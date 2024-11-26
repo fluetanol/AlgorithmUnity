@@ -44,6 +44,15 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""MouseWheel"",
+                    ""type"": ""Value"",
+                    ""id"": ""22816414-f921-4967-9639-6ab1e77fc5a2"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -90,6 +99,17 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
                     ""action"": ""MouseButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8926ecd-cecf-4727-ab01-470a8dbdc160"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""MouseWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -123,6 +143,7 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
         m_TreeScene = asset.FindActionMap("TreeScene", throwIfNotFound: true);
         m_TreeScene_MouseDelta = m_TreeScene.FindAction("MouseDelta", throwIfNotFound: true);
         m_TreeScene_MouseButton = m_TreeScene.FindAction("MouseButton", throwIfNotFound: true);
+        m_TreeScene_MouseWheel = m_TreeScene.FindAction("MouseWheel", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -186,12 +207,14 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
     private List<ITreeSceneActions> m_TreeSceneActionsCallbackInterfaces = new List<ITreeSceneActions>();
     private readonly InputAction m_TreeScene_MouseDelta;
     private readonly InputAction m_TreeScene_MouseButton;
+    private readonly InputAction m_TreeScene_MouseWheel;
     public struct TreeSceneActions
     {
         private @InputControlMap m_Wrapper;
         public TreeSceneActions(@InputControlMap wrapper) { m_Wrapper = wrapper; }
         public InputAction @MouseDelta => m_Wrapper.m_TreeScene_MouseDelta;
         public InputAction @MouseButton => m_Wrapper.m_TreeScene_MouseButton;
+        public InputAction @MouseWheel => m_Wrapper.m_TreeScene_MouseWheel;
         public InputActionMap Get() { return m_Wrapper.m_TreeScene; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -207,6 +230,9 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
             @MouseButton.started += instance.OnMouseButton;
             @MouseButton.performed += instance.OnMouseButton;
             @MouseButton.canceled += instance.OnMouseButton;
+            @MouseWheel.started += instance.OnMouseWheel;
+            @MouseWheel.performed += instance.OnMouseWheel;
+            @MouseWheel.canceled += instance.OnMouseWheel;
         }
 
         private void UnregisterCallbacks(ITreeSceneActions instance)
@@ -217,6 +243,9 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
             @MouseButton.started -= instance.OnMouseButton;
             @MouseButton.performed -= instance.OnMouseButton;
             @MouseButton.canceled -= instance.OnMouseButton;
+            @MouseWheel.started -= instance.OnMouseWheel;
+            @MouseWheel.performed -= instance.OnMouseWheel;
+            @MouseWheel.canceled -= instance.OnMouseWheel;
         }
 
         public void RemoveCallbacks(ITreeSceneActions instance)
@@ -256,5 +285,6 @@ public partial class @InputControlMap: IInputActionCollection2, IDisposable
     {
         void OnMouseDelta(InputAction.CallbackContext context);
         void OnMouseButton(InputAction.CallbackContext context);
+        void OnMouseWheel(InputAction.CallbackContext context);
     }
 }

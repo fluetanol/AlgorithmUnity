@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -6,16 +7,21 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
+    public float wheelMin = 2, wheelMax = 9;
+    public bool isMouseDeltaAllow = true;
+
     public static InputManager current;
     [SerializeField] InputControlMap controlMap;
     
-    Vector2 mouseVelocity;
-    public bool isMouseDeltaAllow = true;
+    private Vector2 mouseVelocity;
     private bool isMousePressed;
+    Tweener tween;
+
 
 
     void Awake(){
         current = this;
+
         controlMap = new InputControlMap();
     }
     
@@ -25,6 +31,7 @@ public class InputManager : MonoBehaviour
         controlMap.TreeScene.MouseDelta.performed+= OnMouseDelta;
         controlMap.TreeScene.MouseButton.started += OnMouseClick;
         controlMap.TreeScene.MouseButton.canceled += OnMouseClick;
+        controlMap.TreeScene.MouseWheel.performed += OnMouseWheelMove;
 
         controlMap.TreeScene.MouseDelta.Enable();
         controlMap.TreeScene.MouseButton.Enable();
@@ -38,6 +45,8 @@ public class InputManager : MonoBehaviour
 
         controlMap.TreeScene.MouseButton.started -= OnMouseClick;
         controlMap.TreeScene.MouseButton.canceled -= OnMouseClick;
+
+        controlMap.TreeScene.MouseWheel.performed -= OnMouseWheelMove;
 
         controlMap.TreeScene.MouseDelta.Disable();
         controlMap.TreeScene.MouseButton.Disable();
@@ -82,6 +91,28 @@ public class InputManager : MonoBehaviour
             isMousePressed = false;
         }
     }   
+
+    void OnMouseWheelMove(InputAction.CallbackContext context){
+        if(!isMouseDeltaAllow) return;
+       Vector2 wheelDelta = context.ReadValue<Vector2>();   
+       float expectSize = Mathf.Clamp(Camera.main.orthographicSize - wheelDelta.normalized.y, wheelMin, wheelMax);
+
+        if(tween != null && tween.IsActive() && tween.IsPlaying()){
+            tween.ChangeEndValue(Mathf.Round(expectSize), 0.5f, true).Restart();
+        }   
+        else{
+            tween = Camera.main.DOCameraZoom(expectSize, 0.5f);
+        }
+    }
+
+    void OnApplicationFocus(bool focusStatus) {
+        if(!focusStatus){
+            StopAllCoroutines();
+            StartCoroutine(CameraDecelerate(mouseVelocity));
+            mouseVelocity = Vector2.zero;
+            isMousePressed = false;
+        }
+    }
 
     IEnumerator CameraDecelerate(Vector2 velocity){
         while(velocity.magnitude > 0){
