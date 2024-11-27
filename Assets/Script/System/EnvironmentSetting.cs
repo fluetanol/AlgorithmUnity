@@ -34,6 +34,7 @@ public class Setting : MonoBehaviour
     [Header("BGM Setting")]
     public List<AudioClip> Bgms;
     public AudioSource Source;
+    public bool SoundOn;
 
 
     void Awake(){
@@ -42,14 +43,24 @@ public class Setting : MonoBehaviour
     }
 
     void Update(){
-        if (!Source.isPlaying){
+        SoundControl();
+        VolumeControl();    
+    }
+
+    void SoundControl(){
+        if (SoundOn && !Source.isPlaying)
+        {
             Source.clip = Bgms[Random.Range(0, Bgms.Count)];
             Source.Play();
         }
-        if(Source.volume != SoundVolume && Source.isPlaying)
-            Source.volume = SoundVolume;
+        else if (!SoundOn && Source.isPlaying)
+        {
+            Source.Stop();
+        }
     }
 
-
-
+    void VolumeControl(){
+        if (Source.volume != SoundVolume && Source.isPlaying)
+            Source.volume = SoundVolume;
+    }
 }

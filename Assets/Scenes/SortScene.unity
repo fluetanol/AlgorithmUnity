@@ -527,10 +527,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e083e0918351754689ba85b8193a522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Bgms:
-  - {fileID: 8300000, guid: e44a7793d07688d4199bd7e043b79ff9, type: 3}
-  - {fileID: 8300000, guid: b81a3c572b8cbfa40bc8a9c9d653d63f, type: 3}
+  SoundVolume: 0.5
+  frameRate: 60
+  resolution: 0
+  isFixedFrameRate: 0
+  TweenCapacity: 200
+  SequenceCapacity: 30
+  Bgms: []
   Source: {fileID: 352603176}
+  SoundOn: 0
 --- !u!1 &171492074
 GameObject:
   m_ObjectHideFlags: 0
