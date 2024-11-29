@@ -20,7 +20,7 @@ public class TextFieldPanel : PanelBlocking
     public Vector2 OriginAnchor;
 
     void Awake(){
-        OriginAnchor = GetComponent<RectTransform>().anchoredPosition;
+       // OriginAnchor = GetComponent<RectTransform>().anchoredPosition;
         print(OriginAnchor);
     }
 

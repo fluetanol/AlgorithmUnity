@@ -17,7 +17,8 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] private Button             _addNodeButton;
     [SerializeField] private Button             _findNodeButton;   
     [SerializeField] private Button             _removeNodeButton; 
-
+    [SerializeField] private Button            _treeSettingButton;
+    [SerializeField] private Button            _traversalButton;
 
     [SerializeField] private GameObject         _nodeInfoPrefab;
     [SerializeField] private Transform          _nodeInfoParent;
@@ -26,6 +27,8 @@ public class TreeUIManager : MonoBehaviour
     [Header("Panel")]
     [SerializeField] private RectTransform      _nodeInfoPanel;
     [SerializeField] private TextFieldPanel    _textFieldPanel;
+    [SerializeField] private RectTransform     _traversalPanel;
+    [SerializeField] private RectTransform     _treeMenuPanel;
 
     //static managed;
     private static           GameObject         _staticNodeInfoPrefab;
@@ -61,10 +64,15 @@ public class TreeUIManager : MonoBehaviour
         _removeNodeButton.onClick.AddListener(() => OnRemoveClick(0.5f));
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
+
+        _treeSettingButton.onClick.AddListener(() => OnTreeSettingButton());
     }
 
-    void Start(){
+    private void OnTreeSettingButton(){
+        _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
+        _textFieldPanel.GetComponent<RectTransform>().MovePanelUIByVertical(0.5f, 25, false);
     }
+    
 
     public void SetNewTree(int num){
         _treeManage.SetNewTree(num);
@@ -82,6 +90,8 @@ public class TreeUIManager : MonoBehaviour
             ObjectPool.DestoyPoolObject(edge.gameObject, ObjectPoolType.Edge);
         }
     }
+
+
 
     public void FindNode(int value){
         if(_nodeManage.IsExistNode(value, out Node node)){
@@ -196,7 +206,9 @@ public class TreeUIManager : MonoBehaviour
     }
 
     public void OnFindClick(float deltaTime){
-        FindNode(int.Parse(_textFieldPanel.InputField.text));
+        if(_textFieldPanel.InputField.text != ""){
+            FindNode(int.Parse(_textFieldPanel.InputField.text));
+        }
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
         _textFieldPanel.onValueChangedListener((s) => OnFindValueChanged(s));
     }

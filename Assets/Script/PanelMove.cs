@@ -30,6 +30,7 @@ public static class PanelShow
         }
         panel.DOAnchorPosY(targetY, deltaTime).SetEase(Ease.InOutQuad).
         onComplete += () => {
+            Debug.Log("??");
             if(activeControl && panel.gameObject.activeSelf && !flag) 
                 panel.gameObject.SetActive(false);
         };
