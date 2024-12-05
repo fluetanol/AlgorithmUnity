@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,8 +9,7 @@ public class AlgorithmSortingManager : MonoBehaviour
     public List<int> _sortList = new();
     public List<GameObject> _sortObject = new();
     public int Size = 50;
-    //public AudioSource source;
-    //public AudioSource source2;
+
 
     public static AlgorithmSortingManager Instance;
     public static SortInterface _sortInterface;
@@ -28,7 +28,7 @@ public class AlgorithmSortingManager : MonoBehaviour
 
     private void FixedUpdate() {
         TimeCheck(ref _time);
-        if(!_isFinish) SortingUIManager.Instance.SetTimeText("Time : " + _time.ToString());
+        if(!_isFinish) SortingUIManager.Instance.SetTimeText(_time.ToString("0.00"));
         if (_sortInterface.UpdateSort()) {
             SortingUIManager.Instance.SetModeText("Finish!");
             if (!_isFinish)  StartCoroutine(FinishAnimation());     
@@ -88,6 +88,6 @@ public class AlgorithmSortingManager : MonoBehaviour
 
     private void SetCameraPosition(){
         Camera.main.transform.position = new(Size / 2, Size / 2, -10);
-        Camera.main.orthographicSize = Size / 1.5f;
+        Camera.main.orthographicSize = Size / 1.25f;
     }
 }

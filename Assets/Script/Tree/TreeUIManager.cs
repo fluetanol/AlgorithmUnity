@@ -64,7 +64,6 @@ public class TreeUIManager : MonoBehaviour
         _removeNodeButton.onClick.AddListener(() => OnRemoveClick(0.5f));
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
-
         _treeSettingButton.onClick.AddListener(() => OnTreeSettingButton());
     }
 
