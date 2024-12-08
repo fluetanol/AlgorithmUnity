@@ -8,7 +8,8 @@ public enum ESortFlag
     Insertion,
     Selection,
     Bubble,
-    Merge
+    Merge,
+    Quick
 }
 
 public class SortingUIManager : MonoBehaviour

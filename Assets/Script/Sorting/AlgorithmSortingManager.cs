@@ -40,7 +40,7 @@ public class AlgorithmSortingManager : MonoBehaviour
         _isFinish = true;
         while (i<_sortObject.Count){
             Color color = (Color.white/_sortObject.Count) * i;
-            _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = color;
+            _sortObject[i].GetComponentInChildren<SpriteRenderer>().material.color = color;
             i+=1;
             yield return new WaitForSeconds(0.05f);
         }

@@ -19,7 +19,7 @@ public class SelectionSort : SortInterface
     public SelectionSort(List<int> sortList, List<GameObject> sortObject){
         _sortList = sortList;
         _sortObject = sortObject;
-        color = _sortObject[0].GetComponentInChildren<MeshRenderer>().material.color;
+        color = _sortObject[0].GetComponentInChildren<SpriteRenderer>().material.color;
     }
 
     private void ChangeElement(int pivotIndex, int changeIndex){
@@ -38,8 +38,8 @@ public class SelectionSort : SortInterface
     }
 
     private void ColorChange(int idx, int before, Color idxColor){
-        _sortObject[idx].GetComponentInChildren<MeshRenderer>().material.color = idxColor;
-        _sortObject[before].GetComponentInChildren<MeshRenderer>().material.color = color;
+        _sortObject[idx].GetComponentInChildren<SpriteRenderer>().material.color = idxColor;
+        _sortObject[before].GetComponentInChildren<SpriteRenderer>().material.color = color;
     }
 
     public bool UpdateSort()
