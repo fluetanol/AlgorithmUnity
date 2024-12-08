@@ -5,8 +5,9 @@ using UnityEngine;
 
 public enum ESortFlag
 {
-    Insertion,
+    None,
     Selection,
+    Insertion,
     Bubble,
     Merge,
     Quick
@@ -36,8 +37,13 @@ public class SortingUIManager : MonoBehaviour
     public void SetSort(int flag)
     {
         this.flag = (ESortFlag)flag;
-        if(!AlgorithmSortingManager.Instance.gameObject.activeSelf) AlgorithmSortingManager.Instance.gameObject.SetActive(true);
-        if(Int32.TryParse(CountInputField.text, out int result)) AlgorithmSortingManager.Instance.InitializeSetting(result);
+
+        if(this.flag == ESortFlag.None) return;
+
+        if(!AlgorithmSortingManager.Instance.gameObject.activeSelf) 
+            AlgorithmSortingManager.Instance.gameObject.SetActive(true);
+        if(Int32.TryParse(CountInputField.text, out int result)) 
+            AlgorithmSortingManager.Instance.InitializeSetting(result);
         else AlgorithmSortingManager.Instance.InitializeSetting(10);
 
         switch(this.flag){
@@ -60,6 +66,7 @@ public class SortingUIManager : MonoBehaviour
             ModeText.text = "Merge";
             AlgorithmSortingManager._sortInterface = new MergeSort(AlgorithmSortingManager.Instance._sortList, AlgorithmSortingManager.Instance._sortObject);
             break;
+            
             default:
             break;
         }
