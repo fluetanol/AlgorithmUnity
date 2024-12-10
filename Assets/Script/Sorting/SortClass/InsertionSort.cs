@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InsertionSort : SortInterface
+public class InsertionSort : Sort, ISortInterface
 {
-    private List<int> _sortList = new();
-    private List<GameObject> _sortObject = new();
-    
     private int _index=0;
     private int _checkIndex=0; 
     private int _pivotIndex=0;
@@ -57,4 +54,8 @@ public class InsertionSort : SortInterface
         return false;
     }
 
+    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    {
+        SetCollection(sortList, sortObject);
+    }
 }

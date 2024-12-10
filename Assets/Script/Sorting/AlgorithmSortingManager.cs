@@ -1,23 +1,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+public interface ISortSelect
+{
+    bool SelectSortMethod(ESortFlag flag, int size);
+}
+
+public class SortFactory{
+    List<ISortInterface> _sortDictionary;
+
+    public SortFactory(List<int> sortList, List<GameObject> sortObject){
+        _sortDictionary = Enumerable.Repeat<ISortInterface>(null, 5).ToList();
+
+        Debug.Log(_sortDictionary.Count);
+        _sortDictionary[1] = new SelectionSort(sortList, sortObject);
+        _sortDictionary[2] = new InsertionSort(sortList, sortObject);
+        _sortDictionary[3] = new BubbleSort(sortList, sortObject);
+        _sortDictionary[4] = new MergeSort(sortList, sortObject);
+    }
 
 
-public class AlgorithmSortingManager : MonoBehaviour
+    public ISortInterface GetSort(ESortFlag flag){
+        return _sortDictionary[(int)flag];
+    }
+
+    public ISortInterface GetSort(ESortFlag flag, List<int> sortList, List<GameObject> sortObject){
+        ISortInterface isort = _sortDictionary[(int)flag];
+        isort.SetSortList(sortList, sortObject);
+        return isort;
+    }
+
+}
+
+public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
 {
     public GameObject SortObject;
     public List<int> _sortList = new();
     public List<GameObject> _sortObject = new();
     public int Size = 50;
 
-
     public static AlgorithmSortingManager Instance;
-    public static SortInterface _sortInterface;
 
+    private ISortInterface _sortInterface;
+    private SortFactory _sortFactory;
     private float _time;
     private bool _isFinish;
+    private bool _isMix;
+
+
     void Awake()=> Instance = this;
 
     private void OnEnable(){
@@ -25,7 +58,8 @@ public class AlgorithmSortingManager : MonoBehaviour
     }
 
     void Start(){ 
-        _sortInterface = new SelectionSort(_sortList, _sortObject);
+        _sortFactory  = new SortFactory(_sortList, _sortObject);
+        _sortInterface = _sortFactory.GetSort(ESortFlag.Selection);
     }
 
     private void FixedUpdate() {
@@ -68,6 +102,7 @@ public class AlgorithmSortingManager : MonoBehaviour
         for (int i = 0; i < Size; i++)  _sortList.Add(i+1);
     }
 
+    //trash code,.....
     private void InitializeInstantiateObject(List<int> sortList, GameObject InstanceObject)
     {
         foreach(var i in _sortObject) Destroy(i);
@@ -91,5 +126,14 @@ public class AlgorithmSortingManager : MonoBehaviour
     private void SetCameraPosition(){
         Camera.main.transform.position = new(Size / 2, Size / 2, -10);
         Camera.main.orthographicSize = Size / 1.25f;
+    }
+
+    public bool SelectSortMethod(ESortFlag flag, int size)
+    {
+        bool isSuccess = true;
+        InitializeSetting(size);
+        if (_isMix) _sortInterface = _sortFactory.GetSort(flag, _sortList, _sortObject);
+        else _sortInterface = _sortFactory.GetSort(flag);
+        return isSuccess;
     }
 }

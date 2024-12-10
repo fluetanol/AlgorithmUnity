@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MergeSort : SortInterface
+public class MergeSort : Sort, ISortInterface
 {
-    private List<int> _sortList = new();
-    private List<GameObject> _sortObject = new();
     private List<(Vector3, String)> _sortObjectScale = new();
     private List<int> _swapList1 = new();
     private List<int> _swapList2 = new();
@@ -109,5 +107,8 @@ public class MergeSort : SortInterface
         cnt += 1;
     }
 
-
+    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    {
+        SetCollection(sortList, sortObject);
+    }
 }

@@ -1,12 +1,9 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class BubbleSort : SortInterface
+public class BubbleSort : Sort, ISortInterface
 {
-    private List<int> _sortList = new();
-    private List<GameObject> _sortObject = new();
-    
+
     private int _index=0;
     private int _checkIndex=1;
     private int _pivotIndex=0;
@@ -56,4 +53,8 @@ public class BubbleSort : SortInterface
         return false;
     }
 
+    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    {
+        SetCollection(sortList, sortObject);
+    }
 }

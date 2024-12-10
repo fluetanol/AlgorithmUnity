@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class SelectionSort : SortInterface
+public class SelectionSort : Sort, ISortInterface
 {
-    private List<int> _sortList = new();
-    private List<GameObject> _sortObject = new();
     //바꿀 위치
     private int _pivotIndex = 0;
     //고른 위치
@@ -66,5 +63,11 @@ public class SelectionSort : SortInterface
             _index += 1;
         }
         return false;
+    }
+
+    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    {
+        SetCollection(sortList, sortObject);
+        _pivotIndex = 0;
     }
 }

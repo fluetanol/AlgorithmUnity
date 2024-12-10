@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sort : SortInterface
+public class Sort
 {
     protected List<int> _sortList = new();
     protected List<GameObject> _sortObject = new();
 
-    public bool UpdateSort()
-    {
-        throw new System.NotImplementedException();
+    public void SetCollection(List<int> sortList, List<GameObject> sortObject){
+        _sortList = sortList;
+        _sortObject = sortObject;
     }
+
 }
