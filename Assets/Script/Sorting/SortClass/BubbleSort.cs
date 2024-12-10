@@ -8,23 +8,20 @@ public class BubbleSort : Sort, ISortInterface
     private int _checkIndex=1;
     private int _pivotIndex=0;
 
-    public BubbleSort(List<int> sortList, List<GameObject> sortObject){
-        _sortList = sortList;
-        _sortObject = sortObject;
-    }
+    public BubbleSort(List<SortObject> sortList):base(sortList){}
 
     private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortObject[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortObject[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex];
+        Vector3 pivotObjectScale = _sortList[pivotIndex].transform.localScale;
+        string pivotObjectName = _sortList[pivotIndex].name;
+        int pivotNum = _sortList[pivotIndex].value;
 
         _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex] = pivotNum;
+        _sortList[changeIndex].value = pivotNum;
 
-        _sortObject[pivotIndex].name = _sortObject[changeIndex].name;
-        _sortObject[changeIndex].name = pivotObjectName;
-        _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
-        _sortObject[changeIndex].transform.localScale = pivotObjectScale;
+        _sortList[pivotIndex].name = _sortList[changeIndex].name;
+        _sortList[changeIndex].name = pivotObjectName;
+        _sortList[pivotIndex].transform.localScale = _sortList[changeIndex].transform.localScale;
+        _sortList[changeIndex].transform.localScale = pivotObjectScale;
     }
 
     public bool UpdateSort()
@@ -53,8 +50,8 @@ public class BubbleSort : Sort, ISortInterface
         return false;
     }
 
-    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    public void SetSortList(List<SortObject> sortList)
     {
-        SetCollection(sortList, sortObject);
+        SetCollection(sortList);
     }
 }

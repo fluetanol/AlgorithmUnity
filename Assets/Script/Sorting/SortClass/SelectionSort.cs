@@ -13,30 +13,28 @@ public class SelectionSort : Sort, ISortInterface
 
     public AudioSource source;
 
-    public SelectionSort(List<int> sortList, List<GameObject> sortObject){
-        _sortList = sortList;
-        _sortObject = sortObject;
-        color = _sortObject[0].GetComponentInChildren<SpriteRenderer>().material.color;
+    public SelectionSort(List<SortObject> sortList) : base(sortList) { 
+        color = _sortList[0].GetColor();
     }
 
     private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortObject[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortObject[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex];
+        Vector3 pivotObjectScale = _sortList[pivotIndex].transform.localScale;
+        string pivotObjectName = _sortList[pivotIndex].name;
+        int pivotNum = _sortList[pivotIndex].value;
         _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex] = pivotNum;
+        _sortList[changeIndex].value = pivotNum;
 
-        _sortObject[pivotIndex].name = _sortObject[changeIndex].name;
-        _sortObject[changeIndex].name = pivotObjectName;
-        _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
-        _sortObject[changeIndex].transform.localScale = pivotObjectScale;
+        _sortList[pivotIndex].name = _sortList[changeIndex].name;
+        _sortList[changeIndex].name = pivotObjectName;
+        _sortList[pivotIndex].transform.localScale = _sortList[changeIndex].transform.localScale;
+        _sortList[changeIndex].transform.localScale = pivotObjectScale;
 
-        //_sortObject[_pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+        //_sortList[_pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
     }
 
     private void ColorChange(int idx, int before, Color idxColor){
-        _sortObject[idx].GetComponentInChildren<SpriteRenderer>().material.color = idxColor;
-        _sortObject[before].GetComponentInChildren<SpriteRenderer>().material.color = color;
+        _sortList[idx].GetComponentInChildren<SpriteRenderer>().material.color = idxColor;
+        _sortList[before].GetComponentInChildren<SpriteRenderer>().material.color = color;
     }
 
     public bool UpdateSort()
@@ -65,9 +63,9 @@ public class SelectionSort : Sort, ISortInterface
         return false;
     }
 
-    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    public void SetSortList(List<SortObject> sortList)
     {
-        SetCollection(sortList, sortObject);
+        SetCollection(sortList);
         _pivotIndex = 0;
     }
 }

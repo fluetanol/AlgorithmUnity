@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class Sort
 {
-    protected List<int> _sortList = new();
-    protected List<GameObject> _sortObject = new();
+    protected List<SortObject> _sortList = new();
 
-    public void SetCollection(List<int> sortList, List<GameObject> sortObject){
+    public Sort(List<SortObject> sortList){
         _sortList = sortList;
-        _sortObject = sortObject;
+    }
+
+    public void SetCollection(List<SortObject> sortList){
+        _sortList = sortList;
     }
 
 }

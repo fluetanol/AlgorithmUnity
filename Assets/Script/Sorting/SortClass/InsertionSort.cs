@@ -7,23 +7,20 @@ public class InsertionSort : Sort, ISortInterface
     private int _checkIndex=0; 
     private int _pivotIndex=0;
 
-    public InsertionSort(List<int> sortList, List<GameObject> sortObject){
-        _sortList = sortList;
-        _sortObject = sortObject;
-    }
+    public InsertionSort(List<SortObject> sortList):base(sortList){}
 
     private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortObject[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortObject[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex];
+        Vector3 pivotObjectScale = _sortList[pivotIndex].transform.localScale;
+        string pivotObjectName = _sortList[pivotIndex].name;
+        int pivotNum = _sortList[pivotIndex].value;
 
         _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex] = pivotNum;
+        _sortList[changeIndex].value = pivotNum;
 
-        _sortObject[pivotIndex].name = _sortObject[changeIndex].name;
-        _sortObject[changeIndex].name = pivotObjectName;
-        _sortObject[pivotIndex].transform.localScale = _sortObject[changeIndex].transform.localScale;
-        _sortObject[changeIndex].transform.localScale = pivotObjectScale;
+        _sortList[pivotIndex].name = _sortList[changeIndex].name;
+        _sortList[changeIndex].name = pivotObjectName;
+        _sortList[pivotIndex].transform.localScale = _sortList[changeIndex].transform.localScale;
+        _sortList[changeIndex].transform.localScale = pivotObjectScale;
 
         //_sortObject[pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
     }
@@ -31,12 +28,6 @@ public class InsertionSort : Sort, ISortInterface
     public bool UpdateSort()
     {
         if(_checkIndex == _sortList.Count) {
-            /*
-            for(int i=_sortObject.Count-1; i>=0; i--){
-                if(_sortObject[i].GetComponentInChildren<MeshRenderer>().material.color == Color.red) break;
-                _sortObject[i].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
-            }*/
-            //AlgorithmManager.Instance.source2.pitch = 1;
             return true;
         }
         else if(_index == -1 || _sortList[_index]< _sortList[_checkIndex]){
@@ -54,8 +45,8 @@ public class InsertionSort : Sort, ISortInterface
         return false;
     }
 
-    public void SetSortList(List<int> sortList, List<GameObject> sortObject)
+    public void SetSortList(List<SortObject> sortList)
     {
-        SetCollection(sortList, sortObject);
+        SetCollection(sortList);
     }
 }

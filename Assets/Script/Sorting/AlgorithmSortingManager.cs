@@ -12,14 +12,14 @@ public interface ISortSelect
 public class SortFactory{
     List<ISortInterface> _sortDictionary;
 
-    public SortFactory(List<int> sortList, List<GameObject> sortObject){
+    public SortFactory(List<SortObject> sortList){
         _sortDictionary = Enumerable.Repeat<ISortInterface>(null, 5).ToList();
 
         Debug.Log(_sortDictionary.Count);
-        _sortDictionary[1] = new SelectionSort(sortList, sortObject);
-        _sortDictionary[2] = new InsertionSort(sortList, sortObject);
-        _sortDictionary[3] = new BubbleSort(sortList, sortObject);
-        _sortDictionary[4] = new MergeSort(sortList, sortObject);
+        _sortDictionary[1] = new SelectionSort(sortList);
+        _sortDictionary[2] = new InsertionSort(sortList);
+        _sortDictionary[3] = new BubbleSort(sortList);
+        _sortDictionary[4] = new MergeSort(sortList);
     }
 
 
@@ -27,9 +27,9 @@ public class SortFactory{
         return _sortDictionary[(int)flag];
     }
 
-    public ISortInterface GetSort(ESortFlag flag, List<int> sortList, List<GameObject> sortObject){
+    public ISortInterface GetSort(ESortFlag flag, List<SortObject> sortList){
         ISortInterface isort = _sortDictionary[(int)flag];
-        isort.SetSortList(sortList, sortObject);
+        isort.SetSortList(sortList);
         return isort;
     }
 
@@ -38,8 +38,7 @@ public class SortFactory{
 public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
 {
     public GameObject SortObject;
-    public List<int> _sortList = new();
-    public List<GameObject> _sortObject = new();
+    public List<SortObject> _sortList = new();
     public int Size = 50;
 
     public static AlgorithmSortingManager Instance;
@@ -58,7 +57,7 @@ public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
     }
 
     void Start(){ 
-        _sortFactory  = new SortFactory(_sortList, _sortObject);
+        _sortFactory  = new SortFactory(_sortList);
         _sortInterface = _sortFactory.GetSort(ESortFlag.Selection);
     }
 
@@ -74,9 +73,9 @@ public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
     IEnumerator FinishAnimation(){
         int i=0;
         _isFinish = true;
-        while (i<_sortObject.Count){
-            Color color = (Color.white/_sortObject.Count) * i;
-            _sortObject[i].GetComponentInChildren<SpriteRenderer>().material.color = color;
+        while (i<_sortList.Count){
+            Color color = (Color.white/_sortList.Count) * i;
+            _sortList[i].SetColor(color);
             i+=1;
             yield return new WaitForSeconds(0.05f);
         }
@@ -98,28 +97,27 @@ public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
     }
 
     private void InitializeList(int Size){
-        _sortList.Clear();
-        for (int i = 0; i < Size; i++)  _sortList.Add(i+1);
+        for (int i = 0; i < Size; i++)  _sortList[i].value = i;
     }
 
     //trash code,.....
-    private void InitializeInstantiateObject(List<int> sortList, GameObject InstanceObject)
+    private void InitializeInstantiateObject(List<SortObject> sortList, GameObject InstanceObject)
     {
-        foreach(var i in _sortObject) Destroy(i);
-        _sortObject.Clear();
+        foreach(var i in _sortList) Destroy(i);
+        _sortList.Clear();
 
         for (int i = 0; i < sortList.Count; i++)
         {
             var newObject = Instantiate(InstanceObject);
             Vector3 scale = newObject.transform.localScale;
             Vector3 position = newObject.transform.position;
-            scale.y = sortList[i];
+            scale.y = sortList[i].transform.localScale.y;  
             position.x = i;
 
             newObject.name = sortList[i].ToString();
             newObject.transform.localScale = scale;
             newObject.transform.position = position;
-            _sortObject.Add(newObject);
+            _sortList.Add(newObject.GetComponent<SortObject>());    
         }
     }
 
@@ -132,7 +130,7 @@ public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
     {
         bool isSuccess = true;
         InitializeSetting(size);
-        if (_isMix) _sortInterface = _sortFactory.GetSort(flag, _sortList, _sortObject);
+        if (_isMix) _sortInterface = _sortFactory.GetSort(flag, _sortList);
         else _sortInterface = _sortFactory.GetSort(flag);
         return isSuccess;
     }
