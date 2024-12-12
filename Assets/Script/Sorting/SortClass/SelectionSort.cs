@@ -22,7 +22,7 @@ public class SelectionSort : Sort, ISortInterface
         string pivotObjectName = _sortList[pivotIndex].name;
         int pivotNum = _sortList[pivotIndex].value;
         _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex].value = pivotNum;
+        _sortList[changeIndex].Set(pivotNum);
 
         _sortList[pivotIndex].name = _sortList[changeIndex].name;
         _sortList[changeIndex].name = pivotObjectName;

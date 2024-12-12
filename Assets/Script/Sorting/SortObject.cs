@@ -3,7 +3,10 @@ using UnityEngine;
 
 public class SortObject : MonoBehaviour, IComparable<SortObject>
 {
-    public int value;
+    public int value{
+        get;
+        private set;
+    }
 
     private SpriteRenderer _spriteRenderer;
 
@@ -20,6 +23,13 @@ public class SortObject : MonoBehaviour, IComparable<SortObject>
         if(other == null) return 1;
         return value.CompareTo(other.value);
     }
+
+    public void Set(int value){
+        this.value = value;
+        name = value.ToString();
+        transform.localScale = new Vector3(1, value, 1);
+    }
+
 
     //opertor overloading
     public static bool operator <=(SortObject a, SortObject b){

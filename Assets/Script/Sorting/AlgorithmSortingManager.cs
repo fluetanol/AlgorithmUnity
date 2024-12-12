@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,13 +96,15 @@ public class AlgorithmSortingManager : MonoBehaviour, ISortSelect
     }
 
     private void InitializeList(int Size){
-        for (int i = 0; i < Size; i++)  _sortList[i].value = i;
+        for (int i = 0; i < Size; i++) {
+            _sortList[i].Set(i);
+        } 
     }
 
     //trash code,.....
     private void InitializeInstantiateObject(List<SortObject> sortList, GameObject InstanceObject)
     {
-        foreach(var i in _sortList) Destroy(i);
+        foreach(var i in _sortList) Destroy(i.gameObject);
         _sortList.Clear();
 
         for (int i = 0; i < sortList.Count; i++)
