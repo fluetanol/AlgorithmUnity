@@ -4,7 +4,5 @@ using SerializableCollections;
 using UnityEngine;
 
 
-public class SortObjectPool : BaseObjectPoolSystem<SortObject>
-{
-    
+public class SortObjectPool : BaseObjectPoolSystem<SortObject>{
 }

@@ -11,7 +11,7 @@ public class SortObject : MonoBehaviour, IComparable<SortObject>
     private SpriteRenderer _spriteRenderer;
 
     private void Awake(){
-        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     public Color GetColor()=> _spriteRenderer.color;
@@ -28,6 +28,7 @@ public class SortObject : MonoBehaviour, IComparable<SortObject>
         this.value = value;
         name = value.ToString();
         transform.localScale = new Vector3(1, value, 1);
+        transform.position = new Vector3(value, 0, 0);
     }
 
 

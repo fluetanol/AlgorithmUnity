@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InsertionSort : Sort, ISortInterface
+public class InsertionSort : Sort, ISort
 {
     private int _index=0;
     private int _checkIndex=0; 

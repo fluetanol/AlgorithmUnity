@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BubbleSort : Sort, ISortInterface
+public class BubbleSort : Sort, ISort
 {
 
     private int _index=0;

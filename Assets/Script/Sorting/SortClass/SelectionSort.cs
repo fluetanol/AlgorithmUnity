@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectionSort : Sort, ISortInterface
+public class SelectionSort : Sort, ISort
 {
     //바꿀 위치
     private int _pivotIndex = 0;

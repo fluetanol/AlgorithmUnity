@@ -37,6 +37,7 @@ public class SortingUIManager : MonoBehaviour
 
     public void SetTimeText(string text) => TimeText.text = text;
     public void SetModeText(string text) => ModeText.text = text;
+    public void StartSort() => SetSort((int)flag);
 
     public void SetSort(int flag)
     {
@@ -47,8 +48,8 @@ public class SortingUIManager : MonoBehaviour
         if(!AlgorithmSortingManager.Instance.gameObject.activeSelf) 
             AlgorithmSortingManager.Instance.gameObject.SetActive(true);
 
-        if(Int32.TryParse(CountInputField.text, out int result)) _sortSelect.SelectSortMethod(this.flag, result);
-        else _sortSelect.SelectSortMethod(this.flag, 10);
+        if(Int32.TryParse(CountInputField.text, out int result)) _sortSelect.SelectSort(this.flag, result);
+        else _sortSelect.SelectSort(this.flag, 10);
         
         SetModeText(_sortUIString[(int)this.flag]);
     }

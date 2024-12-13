@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MergeSort : Sort, ISortInterface
+public class MergeSort : Sort, ISort
 {
     private List<(Vector3, String)> _sortObjectScale = new();
     private List<SortObject> _swapList1 = new();
