@@ -19,16 +19,22 @@ public class SortFactory
     }
 
 
-    public ISort GetSort(ESortFlag flag)
+    public ISort GetISort(ESortFlag flag)
     {
         return _sortDictionary[(int)flag];
     }
 
-    public ISort GetSort(ESortFlag flag, List<SortObject> sortList)
+    public ISort GetISort(ESortFlag flag, List<SortObject> sortList)
     {
         ISort isort = _sortDictionary[(int)flag];
         isort.SetSortList(sortList);
         return isort;
     }
+
+    public Sort GetSort(ESortFlag flag)
+    {
+        return (Sort)_sortDictionary[(int)flag];
+    }
+
 
 }

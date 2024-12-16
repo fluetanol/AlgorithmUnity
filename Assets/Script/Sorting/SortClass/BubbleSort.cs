@@ -1,57 +1,37 @@
+using System.Collections;
 using System.Collections.Generic;
+using SystemExtension;
 using UnityEngine;
 
 public class BubbleSort : Sort, ISort
 {
-
-    private int _index=0;
-    private int _checkIndex=1;
-    private int _pivotIndex=0;
-
     public BubbleSort(List<SortObject> sortList):base(sortList){}
 
     private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortList[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortList[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex].value;
+        SortObject pivotObject = _sortList[pivotIndex];
+        SortObject changeObject = _sortList[changeIndex];
 
-        _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex].Set(pivotNum);
-
-        _sortList[pivotIndex].name = _sortList[changeIndex].name;
-        _sortList[changeIndex].name = pivotObjectName;
-        _sortList[pivotIndex].transform.localScale = _sortList[changeIndex].transform.localScale;
-        _sortList[changeIndex].transform.localScale = pivotObjectScale;
-    }
-
-    public bool UpdateSort()
-    {
-        //Debug.Log(_pivotIndex + " "+_index + " "+ _checkIndex);
-
-        if (_pivotIndex >= _sortList.Count - 1) {
-            //AlgorithmManager.Instance.source2.pitch = 1;
-            return true;
-        }
-        if (_checkIndex >= _sortList.Count - _pivotIndex) {
-            //_sortObject[_checkIndex-1].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
-            _checkIndex = 1;
-            _index = 0;
-            _pivotIndex += 1;
-        }
-
-        if (_sortList[_index] > _sortList[_checkIndex]) {
-            ChangeElement(_index, _checkIndex);
-            //AlgorithmManager.Instance.source2.Play();
-        }
-
-        _index += 1;
-        _checkIndex += 1;
-
-        return false;
+        ExtensionFunction.SwapGameObject(ref pivotObject, ref changeObject);
+        _sortList.SwapElement(pivotIndex, changeIndex);
     }
 
     public void SetSortList(List<SortObject> sortList)
     {
         SetCollection(sortList);
+    }
+
+    public IEnumerator UpdateSort()
+    {
+        _isSortFinish = false;
+        for(int i=0; i<_sortList.Count; i++){
+            for(int j=0; j<_sortList.Count-i-1; j++){
+                if(_sortList[j] > _sortList[j+1]){
+                    ChangeElement(j, j+1);
+                    AddTime(0.1f);
+                    yield return new WaitForSeconds(0.1f);
+                }
+            }
+        }
+        _isSortFinish = true;
     }
 }

@@ -1628,7 +1628,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 523051119}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 331249513}
+        m_TargetAssemblyTypeName: SortingUIManager, Assembly-CSharp
+        m_MethodName: StartSort
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &523051119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5279,7 +5291,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1821993646}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 331249513}
+        m_TargetAssemblyTypeName: SortingUIManager, Assembly-CSharp
+        m_MethodName: StopSort
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1821993646
 MonoBehaviour:
   m_ObjectHideFlags: 0

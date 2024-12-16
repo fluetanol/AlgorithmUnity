@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,7 +34,7 @@ public class MergeSort : Sort, ISort
         _sortList[pivotIndex].transform.localScale = _sortObjectScale[changeIndex].Item1;
     }
 
-    public bool UpdateSort()
+    public bool UpdatesSort()
     {
         if (_length >= _listLength)  return true;
         if(!_isSwap) Merging(ref _swapList1, ref _swapList2);
@@ -109,5 +110,10 @@ public class MergeSort : Sort, ISort
     public void SetSortList(List<SortObject> sortList)
     {
         SetCollection(sortList);
+    }
+
+    public IEnumerator UpdateSort()
+    {
+        throw new NotImplementedException();
     }
 }

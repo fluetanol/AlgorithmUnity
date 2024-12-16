@@ -1,52 +1,41 @@
+using System.Collections;
 using System.Collections.Generic;
+using SystemExtension;
 using UnityEngine;
+using UnityEngine.InputSystem.Interactions;
 
 public class InsertionSort : Sort, ISort
 {
-    private int _index=0;
-    private int _checkIndex=0; 
-    private int _pivotIndex=0;
-
     public InsertionSort(List<SortObject> sortList):base(sortList){}
 
     private void ChangeElement(int pivotIndex, int changeIndex){
-        Vector3 pivotObjectScale = _sortList[pivotIndex].transform.localScale;
-        string pivotObjectName = _sortList[pivotIndex].name;
-        int pivotNum = _sortList[pivotIndex].value;
+        SortObject pivotObject =  _sortList[pivotIndex];
+       SortObject changeObject =  _sortList[changeIndex];
 
-        _sortList[pivotIndex] = _sortList[changeIndex];
-        _sortList[changeIndex].Set(pivotNum);
-
-        _sortList[pivotIndex].name = _sortList[changeIndex].name;
-        _sortList[changeIndex].name = pivotObjectName;
-        _sortList[pivotIndex].transform.localScale = _sortList[changeIndex].transform.localScale;
-        _sortList[changeIndex].transform.localScale = pivotObjectScale;
-
-        //_sortObject[pivotIndex].GetComponentInChildren<MeshRenderer>().material.color = Color.red;
+       ExtensionFunction.SwapGameObject(ref pivotObject, ref changeObject);
+        _sortList.SwapElement(pivotIndex, changeIndex);
     }
-
-    public bool UpdateSort()
-    {
-        if(_checkIndex == _sortList.Count) {
-            return true;
-        }
-        else if(_index == -1 || _sortList[_index]< _sortList[_checkIndex]){
-            _pivotIndex += 1;
-            _checkIndex = _pivotIndex;
-            _index = _pivotIndex - 1;
-            
-        }
-        else if(_sortList[_index]>=_sortList[_checkIndex]){
-            //AlgorithmManager.Instance.source2.Play();
-            ChangeElement(_index, _checkIndex);
-            _checkIndex -= 1;
-            _index -=1;
-        }
-        return false;
-    }
-
+    
     public void SetSortList(List<SortObject> sortList)
     {
         SetCollection(sortList);
+    }
+
+    public IEnumerator UpdateSort()
+    {
+        _isSortFinish = false;
+       for(int i=1; i<_sortList.Count; i++){
+            for(int j=i; j>0; j--){
+                if(_sortList[j]<_sortList[j-1]){
+                    ChangeElement(j, j-1);
+                    AddTime(0.1f);
+                    yield return new WaitForSeconds(0.1f);
+                }
+                else{
+                    break;
+                }
+            }
+       }
+         _isSortFinish = true;
     }
 }

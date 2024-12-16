@@ -1,83 +1,81 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using SystemExtension;
 using Unity.Mathematics;
 using UnityEngine;
 
-public interface ISortSelect
-{
+public interface ISortInfo{
+    float getTime();
+    bool  IsSortFinish();
+    ESortFlag getSortFlag();
+}
+
+public interface ISortControl{
+    void StartSort();
+    void StopSort();
     bool SelectSort(ESortFlag flag, int size);
 }
 
-public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, ISortSelect
+public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, ISortInfo, ISortControl
 {
     public List<SortObject> _sortList = new();
     public int Size = 10;
+    public bool _isMix = true;
 
-    private IObjectPool<SortObject> _objectPool;
+    private IObjectPool<SortObject> _objectPoolInterface;
     private ISort _sortInterface;
+    private Sort _sort;
     private SortFactory _sortFactory;
+
+    private ESortFlag sortFlag;
     private float _time;
-    private bool _isFinish;
-    private bool _isMix;
+
 
 
     void Awake(){
-        _objectPool = FindObjectOfType<SortObjectPool>();
+        _objectPoolInterface = FindObjectOfType<SortObjectPool>();
     }
 
     void Start(){
         InitializeSetting(Size);
-        _sortFactory = new SortFactory(_sortList);
-        _sortInterface = _sortFactory.GetSort(ESortFlag.Selection);
+        _sortFactory   = new SortFactory(_sortList);
+        _sortInterface = _sortFactory.GetISort(ESortFlag.Selection);
+        _sort          = _sortFactory.GetSort(ESortFlag.Selection);
+        sortFlag       = ESortFlag.Selection;
     }
-   
 
-    private void FixedUpdate() {
-        /*
+    private void Update() {
         TimeCheck(ref _time);
-        if(!_isFinish) SortingUIManager.Instance.SetTimeText(_time.ToString("0.00"));
-        if (_sortInterface.UpdateSort()) {
-            SortingUIManager.Instance.SetModeText("Finish!");       
-            if (!_isFinish)  StartCoroutine(FinishAnimation());     
-        }*/
     }
 
-    /*
-    IEnumerator FinishAnimation(){
-        int i=0;
-        _isFinish = true;
-        while (i<_sortList.Count){
-            Color color = (Color.white/_sortList.Count) * i;
-            _sortList[i].SetColor(color);
-            i+=1;
-            yield return new WaitForSeconds(0.05f);
-        }
-        if (_isFinish == true)_isFinish = false;
-        gameObject.SetActive(false);
-        yield break;
-    }*/
+    void ISortControl.StartSort(){
+        StartCoroutine(_sortInterface.UpdateSort());
+    }
 
+    void ISortControl.StopSort(){
+        StopCoroutine(_sortInterface.UpdateSort());
+    }
 
-    public void TimeCheck(ref float time)=>time += Time.deltaTime;
+    public void TimeCheck(ref float time) => time += Time.deltaTime;
 
     public void InitializeSetting(int size){
         _time = 0;
         Size = size;
         InitializeList(size);
         InitializeSetSortObject(_sortList);
-        RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+
+        if(_isMix) RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+
         SetCameraSortPosition();
     }
 
     private void InitializeList(int Size){
-        foreach(var sortObject in _sortList){
-            _objectPool.RemoveObject(sortObject);
-        }
-
-        _sortList = Enumerable.Range(0, Size)
-                    .Select(_ => _objectPool.GetObject())
+        foreach(var sortObject in _sortList) _objectPoolInterface.RemoveObject(sortObject);
+        
+        _sortList = Enumerable.Range(0, Size)       // 0 ~ Size-1 까지 Select문의 함수 반복 실행 하는 쿼리
+                    .Select(_ => _objectPoolInterface.GetObject())
                     .ToList(); 
     }
 
@@ -98,8 +96,11 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
     public bool SelectSort(ESortFlag flag, int size){
         bool isSuccess = true;
         InitializeSetting(size);
-        if (_isMix) _sortInterface = _sortFactory.GetSort(flag, _sortList);
-        else _sortInterface = _sortFactory.GetSort(flag);
+        _sortInterface = _sortFactory.GetISort(flag, _sortList);
         return isSuccess;
     }
+
+    public bool IsSortFinish() => _sort.IsSortFinish();
+    public float getTime() => _sort.GetSortTime();
+    public ESortFlag getSortFlag() => sortFlag;
 }
