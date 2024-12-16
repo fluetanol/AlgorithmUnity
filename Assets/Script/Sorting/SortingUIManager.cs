@@ -57,6 +57,7 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
     }
     public void StopSort() {
         _sortControl.StopSort();
+        _sortControl.SortForceFinish();
     } 
 
     

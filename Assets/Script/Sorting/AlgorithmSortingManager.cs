@@ -15,6 +15,8 @@ public interface ISortInfo{
 public interface ISortControl{
     void StartSort();
     void StopSort();
+    void ResetTime();
+    void SortForceFinish(); 
     bool SelectSort(ESortFlag flag, int size);
 }
 
@@ -102,5 +104,10 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
     public bool IsSortFinish() => _sort.IsSortFinish();
     public float getTime() => _sort.GetSortTime();
+    public void ResetTime() => _sort.ResetTime();
     public ESortFlag getSortFlag() => sortFlag;
+
+    public void SortForceFinish(){
+        _sort.ForceFinish();
+    }
 }

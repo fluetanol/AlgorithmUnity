@@ -14,12 +14,22 @@ public class Sort
         _sortList = sortList;
     }
 
+
     public bool IsSortFinish(){
         return _isSortFinish;
     }
 
+    public void ForceFinish(){
+        _isSortFinish = true;
+        ResetTime();
+    }
+
     public float GetSortTime(){
         return _sortTime;
+    }
+    
+    public void ResetTime(){
+        _sortTime = 0f;
     }
 
     public void AddTime(float deltaTime){

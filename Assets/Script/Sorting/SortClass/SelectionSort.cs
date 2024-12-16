@@ -30,6 +30,7 @@ public class SelectionSort : Sort, ISort
 
 
     public IEnumerator UpdateSort(){
+        _isSortFinish = false;
         for(int i=0; i<_sortList.Count; i++){
             int min = _sortList[i].value;
             int minidx = i;
@@ -43,6 +44,7 @@ public class SelectionSort : Sort, ISort
             AddTime(0.1f);
             yield return new WaitForSeconds(0.1f);
         }
+        _isSortFinish = true;
     }
 
     public void SetSortList(List<SortObject> sortList){
