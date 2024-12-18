@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using SystemExtension;
-using Unity.Mathematics;
 using UnityEngine;
 
 public interface ISortInfo{
@@ -17,22 +14,24 @@ public interface ISortControl{
     void StopSort();
     void ResetTime();
     void SortForceFinish(); 
+    void SetMix(bool isMix);
     bool SelectSort(ESortFlag flag, int size);
 }
 
 public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, ISortInfo, ISortControl
 {
-    public List<SortObject> _sortList = new();
     public int Size = 10;
     public bool _isMix = true;
 
-    private IObjectPool<SortObject> _objectPoolInterface;
-    private ISort _sortInterface;
-    private Sort _sort;
-    private SortFactory _sortFactory;
+    private     IObjectPool<SortObject> _objectPoolInterface;
+    private     ISort                   _sortInterface;
+    private     Sort                    _sort;
+    private     SortFactory             _sortFactory;
 
-    private ESortFlag sortFlag;
-    private float _time;
+    private     List<SortObject>        _sortList = new();
+    private     List<int>               _sortListCopy = new();
+    private     ESortFlag                sortFlag;
+    private     float                   _time;
 
 
 
@@ -41,7 +40,7 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
     }
 
     void Start(){
-        InitializeSetting(Size);
+        ResetSetting(Size);
         _sortFactory   = new SortFactory(_sortList);
         _sortInterface = _sortFactory.GetISort(ESortFlag.Selection);
         _sort          = _sortFactory.GetSort(ESortFlag.Selection);
@@ -62,20 +61,38 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
     public void TimeCheck(ref float time) => time += Time.deltaTime;
 
-    public void InitializeSetting(int size){
+    public void ResetSetting(int size){
         _time = 0;
-        Size = size;
-        InitializeList(size);
-        InitializeSetSortObject(_sortList);
+        if(_isMix || Size != size){
+            InitializeList(size);
+            InitializeSetSortObject(_sortList);
+            RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+            Size = size;
+            _sortListCopy = Enumerable.Range(0, Size)
+                            .Select(i => _sortList[i].value).ToList();
+            Size = size;
+        }
+        else if(_isMix && Size == size){
+            RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+            _sortListCopy = Enumerable.Range(0, Size)
+                  .Select(i => _sortList[i].value).ToList();
 
-        if(_isMix) RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+        }
+        else if(!_isMix){
+            for(int i=0; i<_sortList.Count; i++){
+                _sortList[i].Set(_sortListCopy[i], false);
+            }
+        }
 
         SetCameraSortPosition();
     }
 
     private void InitializeList(int Size){
-        foreach(var sortObject in _sortList) _objectPoolInterface.RemoveObject(sortObject);
-        
+        for(int i=0; i<_sortList.Count; i++){
+            if(_sortList[i] != null){
+                _objectPoolInterface.RemoveObject(_sortList[i]);
+            }
+        }
         _sortList = Enumerable.Range(0, Size)       // 0 ~ Size-1 까지 Select문의 함수 반복 실행 하는 쿼리
                     .Select(_ => _objectPoolInterface.GetObject())
                     .ToList(); 
@@ -97,7 +114,7 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
     public bool SelectSort(ESortFlag flag, int size){
         bool isSuccess = true;
-        InitializeSetting(size);
+        ResetSetting(size);
         _sortInterface = _sortFactory.GetISort(flag, _sortList);
         return isSuccess;
     }
@@ -109,5 +126,10 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
     public void SortForceFinish(){
         _sort.ForceFinish();
+    }
+
+    public void SetMix(bool isMix)
+    {
+        _isMix = isMix;
     }
 }

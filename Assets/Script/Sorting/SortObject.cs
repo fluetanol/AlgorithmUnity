@@ -24,11 +24,11 @@ public class SortObject : MonoBehaviour, IComparable<SortObject>
         return value.CompareTo(other.value);
     }
 
-    public void Set(int value){
+    public void Set(int value, bool positionMove = true){
         this.value = value;
         name = value.ToString();
         transform.localScale = new Vector3(1, value, 1);
-        transform.position = new Vector3(value, 0, 0);
+        if(positionMove) transform.position = new Vector3(value, 0, 0);
     }
 
 

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
-using UnityEngine;
+using UnityEngine.UI;
 
 public enum ESortFlag
 {
@@ -16,13 +16,11 @@ public enum ESortFlag
 
 public class SortingUIManager : BaseSingleTon<SortingUIManager>
 {
-    public         TMP_Text TimeText;
-    private static TMP_Text _timeText;
-    
-    public         TMP_Text ModeText;
-    private static TMP_Text _modeText;
-
+    public         TMP_Text       TimeText;
+    public         TMP_Text       ModeText;
     public         TMP_InputField CountInputField;
+    public         Button         ConfirmButton;
+    public         Button         StartButton;
 
     private         List<string> _sortUIString;
     private         ISortInfo _sortInfo;
@@ -35,24 +33,26 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
         AlgorithmSortingManager sortingManager = FindObjectOfType<AlgorithmSortingManager>();
         _sortInfo = sortingManager;
         _sortControl = sortingManager;
-
-        _timeText = TimeText;
-        _modeText = ModeText;
+        ConfirmButton.onClick.AddListener(() => {SetSort((int)_flag);});
     }
 
 
     void Update(){
-        if(Input.GetKeyDown(KeyCode.Return)) SetSort((int)_flag);
         if(!_sortInfo.IsSortFinish()){
             SetTimeText(_sortInfo.getTime().ToString("F2"));
         }
     }       
 
-    public static void SetTimeText(string text) => _timeText.text = text;
-    public static void SetModeText(string text) => _modeText.text = text;
+    public void SetTimeText(string text) => TimeText.text = text;
+    public void SetModeText(string text) => ModeText.text = text;
+
+    public void ToogleMix(bool isMix){
+        _sortControl.SetMix(isMix);
+    }
 
     public void StartSort(){
         StopSort();
+        _sortControl.ResetTime();
         _sortControl.StartSort();
     }
     public void StopSort() {
@@ -60,18 +60,27 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
         _sortControl.SortForceFinish();
     } 
 
+
+
     
     public void SetSort(int flag){
         this._flag = (ESortFlag)flag;
 
         if(this._flag == ESortFlag.None) return;
 
-        if(!AlgorithmSortingManager.Instance.gameObject.activeSelf) 
-            AlgorithmSortingManager.Instance.gameObject.SetActive(true);
+        if(Int32.TryParse(CountInputField.text, out int result) && result >= 3 && result <= 30) {
+             _sortControl.SelectSort(this._flag, result);
+        }
+        else if(result > 30){
+            _sortControl.SelectSort(this._flag, 30);
+        }
+        else if(result < 3) {
+            _sortControl.SelectSort(this._flag, 3);
+        }
+        else{
+            _sortControl.SelectSort(this._flag, 10);
+        }
 
-        if(Int32.TryParse(CountInputField.text, out int result)) _sortControl.SelectSort(this._flag, result);
-        else _sortControl.SelectSort(this._flag, 10);
-        
         SetModeText(_sortUIString[(int)this._flag]);
     }
     

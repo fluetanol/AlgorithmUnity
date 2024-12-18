@@ -6,27 +6,23 @@ using UnityEngine;
 namespace SerializableCollections
 {
     [Serializable]
-    public class SerializableQueue<T> : ISerializationCallbackReceiver
+    public class SerializableQueue<T> : Queue<T>, ISerializationCallbackReceiver
     {
         [SerializeField] private List<T> _list = new List<T>();
-        private Queue<T> _queue;
 
-        public SerializableQueue()
-        {
-            _queue = new Queue<T>();
-        }
+        public SerializableQueue() :base()
+        {  }
 
-        public SerializableQueue(List<T> list)
+        public SerializableQueue(List<T> list) : base(list)
         {
-            _queue = new Queue<T>(list);
+            _list = list;
         }
 
         //처음 직렬화 되려고 할 때 해야 할 작업
         public void OnBeforeSerialize()
         {
-            // Debug.Log("OnBeforeSerialize");
             _list.Clear();
-            foreach (var item in _queue)
+            foreach (var item in this)
             {
                 _list.Add(item);
             }
@@ -34,25 +30,13 @@ namespace SerializableCollections
 
         public void OnAfterDeserialize()
         {
-            //Debug.Log("OnAfterDeserialize");
-            _queue = new Queue<T>();
+            Clear();
             foreach (var item in _list)
             {
-                _queue.Enqueue(item);
+                Enqueue(item);
             }
         }
 
-        public void Enqueue(T item)
-        {
-            _queue.Enqueue(item);
-        }
-
-        public T Dequeue()
-        {
-            return _queue.Dequeue();
-        }
-
-        public int Count => _queue.Count;
 
 
     }

@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using SerializableCollections;
+using UnityEditor;
 
 public interface IObjectPool<T>{
     public void RemoveObject(T obj);
@@ -41,8 +42,8 @@ public class BaseObjectPoolSystem<T> : MonoBehaviour, IObjectPool<T> where T : M
 
     public void RemoveObject(T obj)
     {
-        obj.gameObject.SetActive(false);
         _objectList.Enqueue(obj);
+        obj.gameObject.SetActive(false);
     }
 
 }
