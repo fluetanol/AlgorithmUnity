@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using SystemExtension;
 using UnityEngine;
@@ -63,21 +64,8 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
     public void ResetSetting(int size){
         _time = 0;
-        if(_isMix || Size != size){
-            InitializeList(size);
-            InitializeSetSortObject(_sortList);
-            RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
-            Size = size;
-            _sortListCopy = Enumerable.Range(0, Size)
-                            .Select(i => _sortList[i].value).ToList();
-            Size = size;
-        }
-        else if(_isMix && Size == size){
-            RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
-            _sortListCopy = Enumerable.Range(0, Size)
-                  .Select(i => _sortList[i].value).ToList();
-
-        }
+        if(_isMix || Size != size) MixingInitializeSetting(size);
+        else if(_isMix && Size == size) MixingFixSetting(size);
         else if(!_isMix){
             for(int i=0; i<_sortList.Count; i++){
                 _sortList[i].Set(_sortListCopy[i], false);
@@ -86,6 +74,24 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
 
         SetCameraSortPosition();
     }
+
+    private void MixingInitializeSetting(int size){
+        InitializeList(size);
+        InitializeSetSortObject(_sortList);
+        RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+        Size = size;
+        _sortListCopy = Enumerable.Range(0, Size)
+                        .Select(i => _sortList[i].value).ToList();
+        Size = size;
+    }
+
+
+    private void MixingFixSetting(int size){
+        RandomizeObject.RandomizeObjectList(ref _sortList, _sortList.Count);
+        _sortListCopy = Enumerable.Range(0, Size)
+              .Select(i => _sortList[i].value).ToList();
+    }
+
 
     private void InitializeList(int Size){
         for(int i=0; i<_sortList.Count; i++){

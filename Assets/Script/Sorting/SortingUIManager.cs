@@ -16,16 +16,16 @@ public enum ESortFlag
 
 public class SortingUIManager : BaseSingleTon<SortingUIManager>
 {
-    public         TMP_Text       TimeText;
-    public         TMP_Text       ModeText;
-    public         TMP_InputField CountInputField;
-    public         Button         ConfirmButton;
-    public         Button         StartButton;
+    public         TMP_Text         TimeText;
+    public         TMP_Text         ModeText;
+    public         TMP_InputField   CountInputField;
+    public         Button           ConfirmButton;
+    public         Button           StartButton;
 
-    private         List<string> _sortUIString;
-    private         ISortInfo _sortInfo;
-    private         ISortControl _sortControl;
-    private         ESortFlag    _flag = 0;  
+    private         List<string>    _sortUIString;
+    private         ISortInfo       _sortInfo;
+    private         ISortControl    _sortControl;
+    private         ESortFlag       _flag = 0;  
 
 
     void Awake() {
@@ -47,7 +47,7 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
     public void SetModeText(string text) => ModeText.text = text;
 
     public void ToogleMix(bool isMix){
-        _sortControl.SetMix(isMix);
+        _sortControl.SetMix(!isMix);
     }
 
     public void StartSort(){
