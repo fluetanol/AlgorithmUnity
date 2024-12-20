@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum ESortFlag
@@ -80,7 +81,7 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
         else{
             _sortControl.SelectSort(this._flag, 10);
         }
-
+        
         SetModeText(_sortUIString[(int)this._flag]);
     }
     

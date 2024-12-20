@@ -57,7 +57,7 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
     }
 
     void ISortControl.StopSort(){
-        StopCoroutine(_sortInterface.UpdateSort());
+        StopAllCoroutines();
     }
 
     public void TimeCheck(ref float time) => time += Time.deltaTime;
