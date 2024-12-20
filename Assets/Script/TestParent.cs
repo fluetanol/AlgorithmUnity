@@ -4,23 +4,21 @@ using UnityEngine;
 
 public class TestParent : MonoBehaviour
 {
-    public Transform myParent;
-
-    public Vector3 position;
-
-    public bool canFollowParent = true;
+    public Transform MyParent;
+    public Vector3   position;
+    public bool      canFollowParent = true;
 
     // Start is called before the first frame update
     void Awake(){
-        position = myParent.position;
+        position = MyParent.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         if(canFollowParent){
-            transform.position = transform.position + (myParent.position - position);
-            position = myParent.position;
+            transform.position = transform.position + (MyParent.position - position);
+            position = MyParent.position;
         }
     }
 

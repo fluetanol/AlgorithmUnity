@@ -14,7 +14,7 @@ public class ObjectPool : MonoBehaviour
     struct ObjectPoolData
     {
         public List<Transform> _poolQueue;
-        public GameObject prefab;
+        public GameObject      prefab;
     }
     
     

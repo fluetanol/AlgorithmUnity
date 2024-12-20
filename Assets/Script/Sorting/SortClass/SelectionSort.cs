@@ -5,8 +5,8 @@ using SystemExtension;
 
 public class SelectionSort : Sort, ISort
 {
-    private Color color;
-    public AudioSource source;
+    private     Color       color;
+    public      AudioSource source;
 
     public SelectionSort(List<SortObject> sortList) : base(sortList) { 
         color = _sortList[0].GetColor();

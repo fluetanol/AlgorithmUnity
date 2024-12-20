@@ -13,9 +13,9 @@ public interface ITitlePlay
 
 public class TitlePanel : MonoBehaviour, ITitlePlay
 {
-    [SerializeField] private float ColorFadeTime;
-    [SerializeField] private float PanelFadeTime;
-    [SerializeField] private TMP_Text titleText;
+    [SerializeField] private float    _colorFadeTime;
+    [SerializeField] private float    _panelFadeTime;
+    [SerializeField] private TMP_Text _titleText;
 
     RectTransform rectTransform;
     void Awake() {
@@ -24,7 +24,7 @@ public class TitlePanel : MonoBehaviour, ITitlePlay
     }
 
     public void TitleSet(String title){
-        titleText.text = title;
+        _titleText.text = title;
     }
 
     public void TitleOpen(){
@@ -33,7 +33,7 @@ public class TitlePanel : MonoBehaviour, ITitlePlay
         x => rectTransform.offsetMin = x,
         new Vector2(0, rectTransform.offsetMin.y), 0.5f);
 
-        s.Append(titleText.DOFade(1, ColorFadeTime));
+        s.Append(_titleText.DOFade(1, _colorFadeTime));
 
     }
 
@@ -41,7 +41,7 @@ public class TitlePanel : MonoBehaviour, ITitlePlay
         Sequence s = DOTween.Sequence();
         Color color = GetComponent<Image>().color;
         color.a = 0;
-        s.Append(rectTransform.DOHidePanelUIByColor(color, PanelFadeTime));
+        s.Append(rectTransform.DOHidePanelUIByColor(color, _panelFadeTime));
     }
 
 

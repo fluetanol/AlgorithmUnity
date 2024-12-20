@@ -3,7 +3,7 @@ using UnityEngine;
 public class BaseSingleTon<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    public static T Instance
+    public  static T Instance
     {
         get
         {

@@ -7,15 +7,15 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
-    public float wheelMin = 2, wheelMax = 9;
-    public bool isMouseDeltaAllow = true;
+    public              float           wheelMin = 2, wheelMax = 9;
+    public              bool            isMouseDeltaAllow = true;
 
-    public static InputManager current;
-    [SerializeField] InputControlMap controlMap;
+    public  static     InputManager     current;
+    [SerializeField]   InputControlMap  controlMap;
     
-    private Vector2 mouseVelocity;
-    private bool isMousePressed;
-    Tweener tween;
+    private            Vector2          _mouseVelocity;
+    private            bool             _isMousePressed;
+    private            Tweener          _tween;
 
 
 
@@ -57,8 +57,8 @@ public class InputManager : MonoBehaviour
     }
 
     void FixedUpdate() {
-        if(isMousePressed && isMouseDeltaAllow){
-            Camera.main.transform.position += new Vector3(mouseVelocity.x, mouseVelocity.y, 0) * Time.fixedDeltaTime;
+        if(_isMousePressed && isMouseDeltaAllow){
+            Camera.main.transform.position += new Vector3(_mouseVelocity.x, _mouseVelocity.y, 0) * Time.fixedDeltaTime;
         }
     }
 
@@ -71,10 +71,10 @@ public class InputManager : MonoBehaviour
 
     void OnMouseDelta(InputAction.CallbackContext context){
         if(!isMouseDeltaAllow) return;
-        if(isMousePressed){
-            mouseVelocity = -context.ReadValue<Vector2>();
-            if (mouseVelocity.magnitude <= 5){
-                mouseVelocity = Vector2.zero;
+        if(_isMousePressed){
+            _mouseVelocity = -context.ReadValue<Vector2>();
+            if (_mouseVelocity.magnitude <= 5){
+                _mouseVelocity = Vector2.zero;
             }
         }
     }
@@ -83,12 +83,12 @@ public class InputManager : MonoBehaviour
         if(!isMouseDeltaAllow) return;
         if(context.ReadValue<float>()>=0.5f){
             //print("Mouse Pressed");
-            isMousePressed = true;
+            _isMousePressed = true;
         }else{
             StopAllCoroutines();
-            StartCoroutine(CameraDecelerate(mouseVelocity));
-            mouseVelocity = Vector2.zero;
-            isMousePressed = false;
+            StartCoroutine(CameraDecelerate(_mouseVelocity));
+            _mouseVelocity = Vector2.zero;
+            _isMousePressed = false;
         }
     }   
 
@@ -97,20 +97,20 @@ public class InputManager : MonoBehaviour
        Vector2 wheelDelta = context.ReadValue<Vector2>();   
        float expectSize = Mathf.Clamp(Camera.main.orthographicSize - wheelDelta.normalized.y, wheelMin, wheelMax);
 
-        if(tween != null && tween.IsActive() && tween.IsPlaying()){
-            tween.ChangeEndValue(Mathf.Round(expectSize), 0.5f, true).Restart();
+        if(_tween != null && _tween.IsActive() && _tween.IsPlaying()){
+            _tween.ChangeEndValue(Mathf.Round(expectSize), 0.5f, true).Restart();
         }   
         else{
-            tween = Camera.main.DOCameraZoom(expectSize, 0.5f);
+            _tween = Camera.main.DOCameraZoom(expectSize, 0.5f);
         }
     }
 
     void OnApplicationFocus(bool focusStatus) {
         if(!focusStatus){
             StopAllCoroutines();
-            StartCoroutine(CameraDecelerate(mouseVelocity));
-            mouseVelocity = Vector2.zero;
-            isMousePressed = false;
+            StartCoroutine(CameraDecelerate(_mouseVelocity));
+            _mouseVelocity = Vector2.zero;
+            _isMousePressed = false;
         }
     }
 

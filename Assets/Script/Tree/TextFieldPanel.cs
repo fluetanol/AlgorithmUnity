@@ -14,10 +14,10 @@ public enum ETextFieldUIType{
 
 public class TextFieldPanel : PanelBlocking
 {
-    public TMP_InputField InputField;
-    public Button ConfirmButton;
-    public Button OpenButton;
-    public Vector2 OriginAnchor;
+    public TMP_InputField   InputField;
+    public Button           ConfirmButton;
+    public Button           OpenButton;
+    public Vector2          OriginAnchor;
 
     void Awake(){
        // OriginAnchor = GetComponent<RectTransform>().anchoredPosition;
