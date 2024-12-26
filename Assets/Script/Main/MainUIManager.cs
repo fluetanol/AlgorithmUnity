@@ -12,6 +12,7 @@ public class MainUIManager : MonoBehaviour
     private void Awake() {
         TitlePlay = FindObjectOfType<TitlePanel>();
     }
+
     public void OnMoveScene(int SceneNum){
         if(SceneNum == -1) SceneManager.LoadSceneAsync("Main");
         else if(SceneNum == 0) {

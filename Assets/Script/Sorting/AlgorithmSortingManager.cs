@@ -29,7 +29,7 @@ public class AlgorithmSortingManager : BaseSingleTon<AlgorithmSortingManager>, I
     private     Sort                    _sort;
     private     SortFactory             _sortFactory;
 
-    private     List<SortObject>        _sortList = new();
+    [SerializeField] private     List<SortObject>        _sortList = new();
     private     List<int>               _sortListCopy = new();
     private     ESortFlag                sortFlag;
     private     float                   _time;

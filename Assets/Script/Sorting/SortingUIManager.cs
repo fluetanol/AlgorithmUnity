@@ -65,8 +65,8 @@ public class SortingUIManager : BaseSingleTon<SortingUIManager>
 
     
     public void SetSort(int flag){
+        StopSort();
         this._flag = (ESortFlag)flag;
-
         if(this._flag == ESortFlag.None) return;
 
         if(Int32.TryParse(CountInputField.text, out int result) && result >= 3 && result <= 30) {
