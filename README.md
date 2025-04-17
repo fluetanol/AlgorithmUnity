@@ -9,14 +9,12 @@
 - 현재도 계속 기능 개발중.
 
 ### 기술적 특징
-- 트리 레이아웃 알고리즘
-트리의 노드들이 겹치지 않으면서 동적으로 생성 및 배치가 될 수 있도록 하는 알고리즘 적용.
-
-- 함수 지연된 실행 관리
-IEnumerator, IEnumerable, yield return을 활용하여 재귀 함수의 실행 흐름을 동적 조절
-.
-- UGUI 
-UGUI를 적극적으로 활용한 시각화 작업
+- **트리 레이아웃 알고리즘**
+  - 트리의 노드들이 겹치지 않으면서 동적으로 생성 및 배치가 될 수 있도록 하는 알고리즘 적용
+- **함수 지연된 실행 관리**
+  - IEnumerator, IEnumerable, yield return을 활용하여 재귀 함수의 실행 흐름을 동적 조절
+- **UGUI** 
+  - 유니티 UI 시스템인 UGUI를 활용한 시각화 작업
 
 ## 🛠️ 기술 스택
 ![Unity](https://img.shields.io/badge/Unity-000000?style=for-the-badge&logo=unity&logoColor=white) 
@@ -26,7 +24,6 @@ UGUI를 적극적으로 활용한 시각화 작업
 | Uncategorized | `Unity` |
 
 
-## 💻 설치 방법
-- 설치 방법 정보가 제공되지 않았습니다.
+
 
 
