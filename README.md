@@ -11,8 +11,9 @@
 ### 이진 정렬 트리의 삽입, 삭제, 검색 시각화.
 - **추가**
 ![TreeGif](readmeImg/BinaryTreeAdd.gif)
-- **삭제**
+- **검색**
 ![TreeGif](readmeImg/findnode.gif)
+- **삭제** 는 아직 트리 레이아웃 알고리즘이 완전하지 않아서 구현 완료가 안됨
 
 ### 트리 순회
 ![TreeGif](readmeImg/inorder.gif)
