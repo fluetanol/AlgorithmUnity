@@ -1,19 +1,21 @@
 # 💻AlgorithmUnity
 ## 🚀 소개
-### 프로젝트 소개
+![title](https://github.com/user-attachments/assets/5d15dbeb-b6f0-48e6-8170-78bbbe320835)
+
+
 알고리즘, 자료구조의 동작 구조를 유니티로 시각화하여 보여주는 프로젝트.
 
 ### 개발된 기능
 - 기본 정렬 알고리즘 (버블, 삽입, 머지 소팅 등등)의 시각화.
-![image](readmeImg/Sort.png)
 ![Sortgif](readmeImg/MergeSort.gif)
 
 
 - 이진 정렬 트리의 삽입, 삭제, 검색 시각화.
-![image](readmeImg/BinarySearchTree.png)
 ![TreeGif](readmeImg/BinaryTreeAdd.gif)
 
+
 - 트리 순회
+
 
 
 - 현재도 계속 기능 개발중.
