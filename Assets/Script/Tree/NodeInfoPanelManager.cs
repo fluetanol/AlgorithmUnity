@@ -15,6 +15,7 @@ public class NodeInfoPanel : PanelBlocking
     }
     
     public void SetNodeInfo(int value, int level, int degree){
+        Debug.LogWarning("SetNodeInfo");
         this._value.text = value.ToString();
         this._level.text = level.ToString();
         this._degree.text = degree.ToString();

@@ -520,10 +520,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82b77a9899654aa48a80ba9bc4d773c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rootleef: {fileID: 1856460616}
-  value: {fileID: 1183891887}
-  level: {fileID: 175302917}
-  degree: {fileID: 1393223318}
+  _rootleef: {fileID: 1856460616}
+  _value: {fileID: 1183891887}
+  _level: {fileID: 175302917}
+  _degree: {fileID: 1393223318}
 --- !u!1 &57380402
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +976,7 @@ GameObject:
   - component: {fileID: 132254891}
   - component: {fileID: 132254892}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: TraversalPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1049,7 +1049,7 @@ GameObject:
   - component: {fileID: 175302918}
   - component: {fileID: 175302917}
   m_Layer: 5
-  m_Name: Value
+  m_Name: LevelValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1828,7 +1828,7 @@ MonoBehaviour:
   _traversalOption: {fileID: 1674818570}
   _nodeInfoPanel: {fileID: 53535934}
   _textFieldPanel: {fileID: 894662117}
-  _traversalPanel: {fileID: 0}
+  _traversalPanel: {fileID: 132254890}
   _treeMenuPanel: {fileID: 1675477132}
 --- !u!114 &349132557
 MonoBehaviour:
@@ -1842,7 +1842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0f4a52555bf2f7419f8634b53f6e7a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scene:
+  Scene:
     m_Handle: 0
 --- !u!1 &362347381
 GameObject:
@@ -5956,7 +5956,7 @@ GameObject:
   - component: {fileID: 1183891888}
   - component: {fileID: 1183891887}
   m_Layer: 5
-  m_Name: Value
+  m_Name: NodeValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7049,7 +7049,7 @@ GameObject:
   - component: {fileID: 1393223319}
   - component: {fileID: 1393223318}
   m_Layer: 5
-  m_Name: Value
+  m_Name: DegreeValue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

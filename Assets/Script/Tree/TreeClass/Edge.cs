@@ -5,6 +5,7 @@ public class Edge : MonoBehaviour
     private     LineRenderer    _lineRenderer;
     public      Node       Node1;   //tree에서는 자식 노드를 가리키기를 강력히 권장함
     public      Node       Node2;   //tree에서는 부모 노드를 가리키기를 강력히 권장함
+    private     int        _weight = 0;
 
     private void Awake()
     {

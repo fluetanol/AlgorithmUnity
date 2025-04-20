@@ -4,13 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public interface ITitlePlay
-{
-    void TitleSet(String title);
-    void TitleOpen();
-    void TitleClose();
-}
-
 public class TitlePanel : MonoBehaviour, ITitlePlay
 {
     [SerializeField] private float    _colorFadeTime;

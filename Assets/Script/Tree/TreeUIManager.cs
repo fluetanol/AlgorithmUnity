@@ -65,6 +65,7 @@ public class TreeUIManager : MonoBehaviour
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
         _treeSettingButton.onClick.AddListener(() => OnTreeSettingButton());
+        _traversalButton.onClick.AddListener(() => PanelNumberMove(false));
     }
 
     private void OnTreeSettingButton(){
@@ -200,28 +201,40 @@ public class TreeUIManager : MonoBehaviour
 
     //TextFieldPanel의 confirm 버튼 기능
     public void OnAddClick(float deltaTime){
+        Debug.Log("Add Click!");
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        if(int.TryParse(_textFieldPanel.InputField.text, out int n)){
+            _textFieldPanel.ConfirmButton.onClick.AddListener(() => AddNode(n));
+        }
         _textFieldPanel.onValueChangedListener((s) => OnAddValueChanged(s));
     }
 
     public void OnFindClick(float deltaTime){
-        if(_textFieldPanel.InputField.text != ""){
-            FindNode(int.Parse(_textFieldPanel.InputField.text));
+        Debug.Log("Find Click!");
+        if(int.TryParse(_textFieldPanel.InputField.text, out int n)){
+            FindNode(n);
         }
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
         _textFieldPanel.onValueChangedListener((s) => OnFindValueChanged(s));
     }
 
     public void OnRemoveClick(float deltaTime){
+        Debug.Log("Remove Click!");
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        if (int.TryParse(_textFieldPanel.InputField.text, out int n))
+        {
+            _textFieldPanel.ConfirmButton.onClick.AddListener(() => RemoveNode(n));
+        }
         _textFieldPanel.onValueChangedListener((s) => OnRemoveValueChanged(s));
     }
 
 
     //TextFieldPanel의 inputField 기능
     public void OnAddValueChanged(string s){
+        Debug.Log("Add Value Changed! : " + s);
         Button button = _textFieldPanel.ConfirmButton;
         if(TryParseAndButtonInteractable(s, button, out int n)){
+            Debug.Log("is new listener: " + n);
             _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton);
             _textFieldPanel.ConfirmButton.onClick.AddListener(() => AddNode(n));
         }
