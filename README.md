@@ -13,7 +13,7 @@
 
 
 ### 트리 순회
-
+![TreeGif](readmeImg/inorder.gif)
 
 
 - 현재도 계속 기능 개발중.

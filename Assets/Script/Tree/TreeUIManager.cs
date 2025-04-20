@@ -27,7 +27,7 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] private RectTransform      _nodeInfoPanel;
     [SerializeField] private TextFieldPanel    _textFieldPanel;
     [SerializeField] private RectTransform     _traversalPanel;
-    [SerializeField] private RectTransform     _treeMenuPanel;
+   // [SerializeField] private RectTransform     _treeMenuPanel;
     [SerializeField] private RectTransform      _nodeTraversalPanel;
 
     //static managed;
@@ -68,17 +68,23 @@ public class TreeUIManager : MonoBehaviour
         _traversalButton.onClick.AddListener(() => OnTraversalSettingButton());
     }
 
+    private bool _treeSettingFlag = false;  
+    private bool _treeTraversalFlag = false;
+
     private void OnTreeSettingButton(){
         Debug.Log("TreeSettingButton Clicked!");
-        _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
-        _textFieldPanel.GetComponent<RectTransform>().MovePanelUIByVertical(0.5f, 25, false);
+      //  _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
+      if(!_treeSettingFlag)  _textFieldPanel.GetComponent<RectTransform>().MovePanelUIByVertical(0.5f, 25, false);
+      else  _textFieldPanel.GetComponent<RectTransform>().MovePanelUIByVertical(0.5f, -50, false);
+        _treeSettingFlag = !_treeSettingFlag;
     }
 
     private void OnTraversalSettingButton(){
         Debug.Log("TraversalSettingButton Clicked!");
-        _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
-        _traversalPanel.MovePanelUIByHorizontal(0.5f, _traversalPanel.sizeDelta.x, false);
-        _nodeTraversalPanel.gameObject.SetActive(true);
+       // _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
+       if(!_treeTraversalFlag)   _traversalPanel.MovePanelUIByHorizontal(0.5f, _traversalPanel.sizeDelta.x, false);
+       else  _traversalPanel.MovePanelUIByHorizontal(0.5f, -_traversalPanel.sizeDelta.x, false);
+        _treeTraversalFlag = !_treeTraversalFlag;
     }
     
 
@@ -211,6 +217,7 @@ public class TreeUIManager : MonoBehaviour
     public void OnAddClick(float deltaTime){
         Debug.Log("Add Click!");
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
+        _textFieldPanel.SetButtonText("노드 추가");
         if(int.TryParse(_textFieldPanel.InputField.text, out int n)){
             _textFieldPanel.ConfirmButton.onClick.AddListener(() => AddNode(n));
         }
@@ -222,6 +229,7 @@ public class TreeUIManager : MonoBehaviour
         if(int.TryParse(_textFieldPanel.InputField.text, out int n)){
             FindNode(n);
         }
+        _textFieldPanel.SetButtonText("노드 찾기");
         _textFieldPanel.ResetUIListener(ETextFieldUIType.ConfirmButton, ETextFieldUIType.InputField);
         _textFieldPanel.onValueChangedListener((s) => OnFindValueChanged(s));
     }
@@ -233,6 +241,8 @@ public class TreeUIManager : MonoBehaviour
         {
             _textFieldPanel.ConfirmButton.onClick.AddListener(() => RemoveNode(n));
         }
+
+        _textFieldPanel.SetButtonText("노드 제거");
         _textFieldPanel.onValueChangedListener((s) => OnRemoveValueChanged(s));
     }
 

@@ -10,6 +10,7 @@ public enum TraversalMode{
     PostOrder = 1,
     InOrder = 2,
     LevelOrder = 3
+ 
 }
 
 

@@ -16,7 +16,9 @@ public class TextFieldPanel : PanelBlocking
 {
     public TMP_InputField   InputField;
     public Button           ConfirmButton;
+    public TMP_Text         ConfirmButtonText;
     public Button           OpenButton;
+
     public Vector2          OriginAnchor;
 
     void Awake(){
@@ -56,5 +58,9 @@ public class TextFieldPanel : PanelBlocking
 
     public void ResetAllValue(){
         InputField.text = "";
+    }
+
+    public void SetButtonText(string text){
+        ConfirmButtonText.text = text;
     }
 }
