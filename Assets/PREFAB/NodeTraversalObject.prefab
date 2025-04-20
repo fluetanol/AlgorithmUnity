@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7006321922069481849}
   - component: {fileID: 5995054081851756185}
   m_Layer: 5
-  m_Name: NodeInfoObject
+  m_Name: NodeTraversalObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

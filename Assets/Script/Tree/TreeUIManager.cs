@@ -20,8 +20,7 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] private Button            _treeSettingButton;
     [SerializeField] private Button            _traversalButton;
 
-    [SerializeField] private GameObject         _nodeInfoPrefab;
-    [SerializeField] private Transform          _nodeInfoParent;
+    [SerializeField] private GameObject         _nodeTraversalPrefab;
     [SerializeField] private Transform          _traversalOption;
 
     [Header("Panel")]
@@ -29,6 +28,7 @@ public class TreeUIManager : MonoBehaviour
     [SerializeField] private TextFieldPanel    _textFieldPanel;
     [SerializeField] private RectTransform     _traversalPanel;
     [SerializeField] private RectTransform     _treeMenuPanel;
+    [SerializeField] private RectTransform      _nodeTraversalPanel;
 
     //static managed;
     private static           GameObject         _staticNodeInfoPrefab;
@@ -57,8 +57,8 @@ public class TreeUIManager : MonoBehaviour
     }
 
     private void OnEnable() {
-        _staticNodeInfoPrefab = _nodeInfoPrefab;
-        _staticNodeInfoParent = _nodeInfoParent;
+        _staticNodeInfoPrefab = _nodeTraversalPrefab;
+        _staticNodeInfoParent = _nodeTraversalPanel;
         _addNodeButton.onClick.AddListener(() => OnAddClick(0.5f));
         _findNodeButton.onClick.AddListener(() => OnFindClick(0.5f));
         _removeNodeButton.onClick.AddListener(() => OnRemoveClick(0.5f));
@@ -78,6 +78,7 @@ public class TreeUIManager : MonoBehaviour
         Debug.Log("TraversalSettingButton Clicked!");
         _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
         _traversalPanel.MovePanelUIByHorizontal(0.5f, _traversalPanel.sizeDelta.x, false);
+        _nodeTraversalPanel.gameObject.SetActive(true);
     }
     
 
@@ -159,8 +160,8 @@ public class TreeUIManager : MonoBehaviour
 
     //시각적 처리 초기화
     private void TraversalReset(){
-        for (int k = _nodeInfoParent.childCount - 1; k >= 0; k--)
-            Destroy(_nodeInfoParent.GetChild(k).gameObject);
+        for (int k = _nodeTraversalPanel.childCount - 1; k >= 0; k--)
+            Destroy(_nodeTraversalPanel.GetChild(k).gameObject);
         _treeManage.ResetRecentNode();
     }
 
