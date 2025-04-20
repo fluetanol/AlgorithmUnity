@@ -46,8 +46,6 @@ public class TextFieldPanel : PanelBlocking
         }
     }
 
-
-
     public void onValueChangedListener(UnityAction<string> listener){
         InputField.onValueChanged.AddListener(listener);
     }
@@ -59,6 +57,4 @@ public class TextFieldPanel : PanelBlocking
     public void ResetAllValue(){
         InputField.text = "";
     }
-
-
 }

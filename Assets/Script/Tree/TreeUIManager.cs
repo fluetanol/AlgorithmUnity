@@ -65,12 +65,19 @@ public class TreeUIManager : MonoBehaviour
         _textFieldPanel.OpenButton.onClick.AddListener(() => ShowTextFieldPanelUI(0.5f));
         _textFieldPanel.InputField.onValueChanged.AddListener((s) => OnAddValueChanged(s));
         _treeSettingButton.onClick.AddListener(() => OnTreeSettingButton());
-        _traversalButton.onClick.AddListener(() => PanelNumberMove(false));
+        _traversalButton.onClick.AddListener(() => OnTraversalSettingButton());
     }
 
     private void OnTreeSettingButton(){
+        Debug.Log("TreeSettingButton Clicked!");
         _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
         _textFieldPanel.GetComponent<RectTransform>().MovePanelUIByVertical(0.5f, 25, false);
+    }
+
+    private void OnTraversalSettingButton(){
+        Debug.Log("TraversalSettingButton Clicked!");
+        _treeMenuPanel.MovePanelUIByHorizontal(0.5f, -_treeMenuPanel.sizeDelta.x, true);
+        _traversalPanel.MovePanelUIByHorizontal(0.5f, _traversalPanel.sizeDelta.x, false);
     }
     
 

@@ -4,9 +4,12 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// 패널들을 도트윈 애니메이션을 이용해 보여주는 기능을 제공하는 클래스
+/// </summary>
 public static class PanelShow
 {
+    // 패널을 수평으로 이동시키는 메소드
     public static void MovePanelUIByHorizontal(this RectTransform panel, float deltaTime, float targetX, bool activeControl = false)
     {
         bool flag = false;
@@ -21,6 +24,7 @@ public static class PanelShow
         };
     }
 
+    // 패널을 수직으로 이동시키는 메소드
     public static void MovePanelUIByVertical(this RectTransform panel, float deltaTime, float targetY, bool activeControl = false){
         bool flag = false;
         
@@ -36,6 +40,7 @@ public static class PanelShow
         };
     }
 
+    
     public static Tweener DOShowPanelUIByColor(this RectTransform panel, Color targetColor, float deltaTime)
     {
         Tweener tw = null;
